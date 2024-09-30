@@ -2,7 +2,9 @@ import cv2
 import numpy as np
 
 #img = cv2.imread("Makvaer/Makvaer.png")
-img = cv2.imread("Hund_efter_hare/boardplaying.png")
+#img = cv2.imread("Hund_efter_hare/boardplaying.png")
+img = cv2.imread("Gaasetavl/Images/Gaasetavl.png")
+
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 gray_blurred = cv2.blur(img_gray, (3, 3))
@@ -20,7 +22,6 @@ if detected_circles is not None:
     white  = 0
     black = 0
     circles = 0
-    Numlines = 0
     pos = []
     x = []
     y = []
@@ -62,13 +63,11 @@ if detected_circles is not None:
     print(f"Number of white circles: {white}")
     print(f"Number of black circles: {black}")
 
-if(white == 2):
-    WhatGameIsIt = "Gaasetavl"
 if(white == 1 and black == 3):
     WhatGameIsIt = "HundEfterHare"
+elif(white == 2):
+    WhatGameIsIt = "Gaasetavl"
 else:
     WhatGameIsIt = "Makvaer"
 
 print(WhatGameIsIt)
-cv2.imshow("Detected Circle", img)
-cv2.waitKey(0)
