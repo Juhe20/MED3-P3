@@ -3,7 +3,7 @@ import numpy as np
 import socket
 import json
 
-#Host stuff to send be able to send data to Unity
+#Host stuff to be able to send data to Unity
 host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
@@ -45,24 +45,30 @@ for (x, y) in zip(xloc3, yloc3):
 hvidposition = []
 for (x, y) in zip(xloc1, yloc1):
     cv2.rectangle(imgplaying, (x, y), (x + width1, y + height1), (0, 255, 0), 2)
-    positiontuple = [x,y]
+    positiontuple = [int(x), int(y)]
     hvidposition.append(positiontuple)
 
-#Get position from each black piece on the board
+# Get position from each black piece on the board
 sortposition = []
-for (x, y) in zip(xloc2, yloc2):
+for index, (x, y) in enumerate(zip(xloc2, yloc2)):
     cv2.rectangle(imgplaying, (x, y), (x + width2, y + height2), (0, 0, 255), 2)
-    positiontuple = [int(x),int(y),0]
+    positiontuple = [int(x), int(y), 0]
     sortposition.append(positiontuple)
 
-#Makes a string of the position lists to send as json to Unity
-positiondata = {
-    "blackposition1": (int(sortposition[0][0]), int(sortposition[0][1])),
-    "blackposition2": (int(sortposition[1][0]), int(sortposition[1][1])),
-    "blackposition3": (int(sortposition[2][0]), int(sortposition[2][1])),
-    "whiteposition1": (int(hvidposition[0][0]), int(hvidposition[0][1])),
-}
+# Empty dictionary to fill in positions
+positiondata = {}
+
+# Adding key value pairs for dictionary for each position appended
+for i in range(len(sortposition)):
+    positiondata[f"dog{i + 1}"] = (sortposition[i][0], sortposition[i][1])
+
+# Add white position if hvidposition has at least one entry
+for i in range(len(hvidposition)):
+    positiondata[f"hare{i + 1}"] = (hvidposition[i][0], hvidposition[i][1])
+
+# Convert to JSON
 positions = json.dumps(positiondata)
+
 #Send data to Unity
 sock.sendall(positions.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
 receivedData = sock.recv(1024).decode("UTF-8")  # receiveing data in Byte fron C#, and converting it to String

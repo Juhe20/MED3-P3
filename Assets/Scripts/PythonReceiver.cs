@@ -15,25 +15,37 @@ public class PythonReceiver : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-    public GameObject dog1;
-    public GameObject dog2;
-    public GameObject dog3;
-    public GameObject hare;
+    public GameObject dogPrefab;
+    public GameObject harePrefab;
 
-    Vector3 blackposition1 = Vector3.zero;
-    Vector3 blackposition2 = Vector3.zero;
-    Vector3 blackposition3 = Vector3.zero;
-    Vector3 whiteposition = Vector3.zero;
-
+    Vector3 dog1 = Vector3.zero;
+    Vector3 dog2 = Vector3.zero;
+    Vector3 dog3 = Vector3.zero;
+    Vector3 hare = Vector3.zero;
+    List<Vector3> dogPositions = new List<Vector3>();
+    List<Vector3> harePosition = new List<Vector3>();
     bool running;
 
     private void Update()
     {
-        //Changes position of each gameobject depending on the received position from Python.
-        dog1.transform.position = blackposition1;
-        dog2.transform.position = blackposition2;
-        dog3.transform.position = blackposition3;
-        hare.transform.position = whiteposition;
+        if(dogPositions.Count >= 0)
+        {
+            foreach (var dog in dogPositions)
+            {
+                int i = 0;
+                Instantiate(dogPrefab, dogPositions[i], Quaternion.identity);
+                dogPositions.Remove(dogPositions[i]);
+            }
+        }
+        if(harePosition.Count >= 0)
+        {
+            foreach(var hare in harePosition) 
+            {
+                int i = 0;
+                Instantiate(harePrefab, harePosition[i], Quaternion.identity);
+                harePosition.Remove(harePosition[i]);
+            }
+        }
     }
 
     private void Start()
@@ -77,19 +89,22 @@ public class PythonReceiver : MonoBehaviour
             //Enables the check of a string key to give the corresponding position.
             var receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<float>>>(dataReceived);
 
-            if (receivedData.ContainsKey("blackposition1"))
-                blackposition1 = new Vector3(receivedData["blackposition1"][0], 0, receivedData["blackposition1"][1]);
-
-            if (receivedData.ContainsKey("blackposition2"))
-                blackposition2 = new Vector3(receivedData["blackposition2"][0], 0, receivedData["blackposition2"][1]);
-
-            if (receivedData.ContainsKey("blackposition3"))
-                blackposition3 = new Vector3(receivedData["blackposition3"][0], 0, receivedData["blackposition3"][1]);
-
-            if (receivedData.ContainsKey("whiteposition1"))
-                whiteposition = new Vector3(receivedData["whiteposition1"][0], 0, receivedData["whiteposition1"][1]);
-
-            print("Received data and updated the object!");
+            //Loop through all key value pairs and add the position to a list of that animal.
+            foreach (var kvp in receivedData)
+            {
+                // Check if the key contains "dog"
+                if (kvp.Key.Contains("dog"))
+                {
+                    Vector3 position = new Vector3(kvp.Value[0], 0, kvp.Value[1]);
+                    dogPositions.Add(position); // Optional: Store position in a list if needed
+                }
+                else if (kvp.Key.Contains("hare"))
+                {
+                    Vector3 position = new Vector3(kvp.Value[0], 0, kvp.Value[1]);
+                    harePosition.Add(position); // Optional: Store position in a list if needed
+                }
+            }
+            print("Received list of positions!");
 
             //Sends data back to Python if necessary at a later point
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this message?");
