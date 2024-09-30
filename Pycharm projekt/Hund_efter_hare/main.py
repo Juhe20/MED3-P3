@@ -3,6 +3,7 @@ import numpy as np
 from cv2 import waitKey
 import socket
 import time
+import json
 
 host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,16 +53,24 @@ for (x, y) in zip(xloc2, yloc2):
     positiontuple = [int(x),int(y),0]
     sortposition.append(positiontuple)
 
-while True:
-    time.sleep(0.5)  # sleep 0.5 sec
-    sortposition[0][0] += 1  # Increment x
-    sortposition[0][1] += 1  # Increment y
-    posString = ','.join(map(lambda v: f"{','.join(map(str, v))}", sortposition))
-    print(posString)
+positiondata = {
+    "blackposition1": (int(sortposition[0][0]), int(sortposition[0][1])),
+    "blackposition2": (int(sortposition[1][0]), int(sortposition[1][1])),
+    "blackposition3": (int(sortposition[2][0]), int(sortposition[2][1])),
+    "whiteposition1": (int(hvidposition[0][0]), int(hvidposition[0][1])),
+}
+positions = json.dumps(positiondata)
 
-    sock.sendall(posString.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
-    receivedData = sock.recv(1024).decode("UTF-8")  # receiveing data in Byte fron C#, and converting it to String
-    print(receivedData)
+
+#sortposition[0][0] += 1  # Increment x
+#sortposition[0][1] += 1  # Increment y
+#posString = ','.join(map(lambda v: f"{','.join(map(str, v))}", sortposition))
+#print(posString)
+
+sock.sendall(positions.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
+receivedData = sock.recv(1024).decode("UTF-8")  # receiveing data in Byte fron C#, and converting it to String
+print(receivedData)
+
 
 
 

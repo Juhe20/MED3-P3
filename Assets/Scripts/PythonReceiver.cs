@@ -1,11 +1,11 @@
-﻿﻿using System.Collections;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using UnityEngine;
 using System.Threading;
-using System;
+using UnityEngine;
+
 
 public class PythonReceiver : MonoBehaviour
 {
@@ -15,13 +15,24 @@ public class PythonReceiver : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-    Vector3 receivedPos = Vector3.zero;
+    public GameObject dog1;
+    public GameObject dog2;
+    public GameObject dog3;
+    public GameObject hare;
+
+    Vector3 blackposition1 = Vector3.zero;
+    Vector3 blackposition2 = Vector3.zero;
+    Vector3 blackposition3 = Vector3.zero;
+    Vector3 whiteposition = Vector3.zero;
 
     bool running;
 
     private void Update()
     {
-        transform.position = receivedPos; //assigning receivedPos in SendAndReceiveData()
+        dog1.transform.position = blackposition1;
+        dog2.transform.position = blackposition2;
+        dog3.transform.position = blackposition3;
+        hare.transform.position = whiteposition;
     }
 
     private void Start()
@@ -31,7 +42,7 @@ public class PythonReceiver : MonoBehaviour
         mThread.Start();
     }
 
-    void GetInfo()
+    private void GetInfo()
     {
         localAdd = IPAddress.Parse(connectionIP);
         listener = new TcpListener(IPAddress.Any, connectionPort);
@@ -47,73 +58,38 @@ public class PythonReceiver : MonoBehaviour
         listener.Stop();
     }
 
-    void SendAndReceiveData()
+
+    private void SendAndReceiveData()
     {
         NetworkStream nwStream = client.GetStream();
         byte[] buffer = new byte[client.ReceiveBufferSize];
 
-        //---receiving Data from the Host----
-        int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize); //Getting data in Bytes from Python
-        string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead); //Converting byte data to string
+        int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
+        string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-        if (dataReceived != null)
+        if (!string.IsNullOrEmpty(dataReceived))
         {
-            //---Using received data---
-            receivedPos = StringToVector3(dataReceived); //<-- assigning receivedPos value from Python
-            print("received pos data, and moved the Cube!");
+            Debug.Log($"Received JSON: {dataReceived}");
+            var receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<float>>>(dataReceived);
 
-            //---Sending Data to Host----
-            byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
-            nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
+            if (receivedData.ContainsKey("blackposition1"))
+                blackposition1 = new Vector3(receivedData["blackposition1"][0], 0, receivedData["blackposition1"][1]);
+
+            if (receivedData.ContainsKey("blackposition2"))
+                blackposition2 = new Vector3(receivedData["blackposition2"][0], 0, receivedData["blackposition2"][1]);
+
+            if (receivedData.ContainsKey("blackposition3"))
+                blackposition3 = new Vector3(receivedData["blackposition3"][0], 0, receivedData["blackposition3"][1]);
+
+            if (receivedData.ContainsKey("whiteposition1"))
+                whiteposition = new Vector3(receivedData["whiteposition1"][0], 0, receivedData["whiteposition1"][1]);
+
+            print("Received data and updated the object!");
+            Debug.Log($"checking blackposition1 {blackposition1}");
+
+
+            byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this message?");
+            nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
         }
     }
-
-    public static Vector3 StringToVector3(string sVector)
-    {
-        // Log the input for debugging
-        Debug.Log($"Input string: {sVector}");
-
-        // Split the items
-        string[] sArray = sVector.Split(',');
-
-        // Ensure there are three components
-        if (sArray.Length < 3)
-        {
-            throw new FormatException("Input string is not in the correct format for a Vector3.");
-        }
-
-        // Parse the components, ensuring to handle potential errors
-        try
-        {
-            float x = float.Parse(sArray[0]);
-            float y = float.Parse(sArray[1]);
-            float z = float.Parse(sArray[2]);
-            return new Vector3(x, y, z);
-        }
-        catch (FormatException ex)
-        {
-            Debug.LogError($"Parsing error: {ex.Message}");
-            throw;
-        }
-        catch (OverflowException ex)
-        {
-            Debug.LogError($"Overflow error: {ex.Message}");
-            throw;
-        }
-    }
-
-    /*
-    public static string GetLocalIPAddress()
-    {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (var ip in host.AddressList)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-            {
-                return ip.ToString();
-            }
-        }
-        throw new System.Exception("No network adapters with an IPv4 address in the system!");
-    }
-    */
 }
