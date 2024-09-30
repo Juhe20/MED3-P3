@@ -29,8 +29,8 @@ if detected_circles is not None:
     for pt in detected_circles[0,:]:
         total_circles += 1
         a,b,r = pt[0], pt[1], pt[2]
-        dot_color = (0,255,0)
-        circle_color = (0,0,255)
+        dot_color = (0,0,255)
+        circle_color = (255,0,0)
 
         #checking pawn color
         mask = np.zeros(inp_img.shape[:2], dtype="uint8")
