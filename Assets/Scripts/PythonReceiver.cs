@@ -17,14 +17,12 @@ public class PythonReceiver : MonoBehaviour
     TcpClient client;
     public GameObject dogPrefab;
     public GameObject harePrefab;
-
-    Vector3 dog1 = Vector3.zero;
-    Vector3 dog2 = Vector3.zero;
-    Vector3 dog3 = Vector3.zero;
-    Vector3 hare = Vector3.zero;
     List<Vector3> dogPositions = new List<Vector3>();
     List<Vector3> harePosition = new List<Vector3>();
     bool running;
+    public Camera camera;
+    public GameObject playField;
+
 
     private void Update()
     {
@@ -46,6 +44,9 @@ public class PythonReceiver : MonoBehaviour
                 harePosition.Remove(harePosition[i]);
             }
         }
+        camera.transform.position = new Vector3(playField.transform.position.x, 300f, playField.transform.position.z);
+        camera.transform.LookAt(playField.transform.position);
+
     }
 
     private void Start()
@@ -71,7 +72,6 @@ public class PythonReceiver : MonoBehaviour
         }
         listener.Stop();
     }
-
 
     private void SendAndReceiveData()
     {

@@ -55,10 +55,10 @@ for index, (x, y) in enumerate(zip(xloc2, yloc2)):
     positiontuple = [int(x), int(y), 0]
     sortposition.append(positiontuple)
 
-# Empty dictionary to fill in positions
+#Create empty dictionary to fill in positions
 positiondata = {}
 
-# Adding key value pairs for dictionary for each position appended
+# Adding key value pairs for dictionary for each position
 for i in range(len(sortposition)):
     positiondata[f"dog{i + 1}"] = (sortposition[i][0], sortposition[i][1])
 
