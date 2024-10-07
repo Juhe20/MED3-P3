@@ -7,9 +7,9 @@ host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-#img = cv2.imread("Makvaer/Makvaer.png")
+img = cv2.imread("Makvaer/Makvaer.png")
 #img = cv2.imread("Hund_efter_hare/boardplaying.png")
-img = cv2.imread("Gaasetavl/Images/Gaasetavl.png")
+#img = cv2.imread("Gaasetavl/Images/Gaasetavl.png")
 
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -20,6 +20,7 @@ detected_circles = cv2.HoughCircles(gray_blurred,
                                     cv2.HOUGH_GRADIENT, 0.2, 20, param1=55,
                                     param2=30, minRadius=1, maxRadius=30)
 
+positiondata = {}
 # Draw circles that are detected.
 if detected_circles is not None:
 
@@ -29,7 +30,6 @@ if detected_circles is not None:
     black = 0
     circles = 0
     colors = []
-    positiondata = {}
     for pt in detected_circles[0, :]:
         a, b, r = pt[0], pt[1], pt[2]
         circles = circles+1
@@ -57,10 +57,10 @@ if detected_circles is not None:
         average_color = np.mean(mean_color)  # Calculate average brightness
         if average_color < 128:  # Threshold for black (can adjust)
             black += 1
-            positiondata[f"black{black}"] = [a, 0, b]
+            positiondata[f"black{black}"] = [int(a), 0, int(b)]
         else:
             white += 1
-            positiondata[f"white{white}"] = [a, 0, b]
+            positiondata[f"white{white}"] = [int(a), 0, int(b)]
 #Lavet af Chat
 
 
@@ -69,10 +69,8 @@ if detected_circles is not None:
     print(f"Number of white circles: {white}")
     print(f"Number of black circles: {black}")
 
-
-
 if white == 1 and black == 3:
-    WhatGameIsIt = "HundEfterHare"
+    WhatGameIsIt = "Hundefterhare"
 elif white == 2:
     WhatGameIsIt = "Gaasetavl"
 else:
