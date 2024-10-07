@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2711160912023134618}
   - component: {fileID: 1184967157869758721}
   m_Layer: 0
-  m_Name: Hare
+  m_Name: white
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

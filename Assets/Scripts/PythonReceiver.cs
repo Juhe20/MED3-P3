@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class PythonReceiver : MonoBehaviour
@@ -15,10 +16,10 @@ public class PythonReceiver : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-    public GameObject dogPrefab;
-    public GameObject harePrefab;
-    List<Vector3> dogPositions = new List<Vector3>();
-    List<Vector3> harePosition = new List<Vector3>();
+    public GameObject blackPrefab;
+    public GameObject whitePrefab;
+    List<Vector3> blackPositions = new List<Vector3>();
+    List<Vector3> whitePosition = new List<Vector3>();
     bool running;
     public Camera camera;
     public GameObject playField;
@@ -26,22 +27,22 @@ public class PythonReceiver : MonoBehaviour
 
     private void Update()
     {
-        if(dogPositions.Count >= 0)
+        if (blackPositions.Count >= 0)
         {
-            foreach (var dog in dogPositions)
+            foreach (var black in blackPositions)
             {
                 int i = 0;
-                Instantiate(dogPrefab, dogPositions[i], Quaternion.identity);
-                dogPositions.Remove(dogPositions[i]);
+                Instantiate(blackPrefab, blackPositions[i], Quaternion.identity);
+                blackPositions.Remove(blackPositions[i]);
             }
         }
-        if(harePosition.Count >= 0)
+        if (whitePosition.Count >= 0)
         {
-            foreach(var hare in harePosition) 
+            foreach (var white in whitePosition)
             {
                 int i = 0;
-                Instantiate(harePrefab, harePosition[i], Quaternion.identity);
-                harePosition.Remove(harePosition[i]);
+                Instantiate(whitePrefab, whitePosition[i], Quaternion.identity);
+                whitePosition.Remove(whitePosition[i]);
             }
         }
         camera.transform.position = new Vector3(playField.transform.position.x, 300f, playField.transform.position.z);
@@ -81,6 +82,24 @@ public class PythonReceiver : MonoBehaviour
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
         string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
+        switch (dataReceived)
+        {
+            case "Gaasetavl":
+                SceneManager.LoadScene("Gaasetavl");
+                break;
+
+            case "Makvaer":
+                SceneManager.LoadScene("Makvaer");
+                break;
+
+            case "Hundefterhare":
+                SceneManager.LoadScene("Hundefterhare");
+                break;
+
+            default:
+                Debug.Log($"Unknown command received: {dataReceived}");
+                break;
+        }
         //Checks if the data read from above is a non empty string.
         if (!string.IsNullOrEmpty(dataReceived))
         {
@@ -88,20 +107,20 @@ public class PythonReceiver : MonoBehaviour
             //Uses a dictionary to check for key-value pairs from the json string.
             //Enables the check of a string key to give the corresponding position.
             var receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<float>>>(dataReceived);
-
             //Loop through all key value pairs and add the position to a list of that animal.
             foreach (var kvp in receivedData)
             {
-                // Check if the key contains "dog"
-                if (kvp.Key.Contains("dog"))
+                // Check if the key contains "black"
+                if (kvp.Key.Contains("black"))
                 {
-                    Vector3 position = new Vector3(kvp.Value[0], 0, kvp.Value[1]);
-                    dogPositions.Add(position); // Optional: Store position in a list if needed
+                    Vector3 position = new Vector3(kvp.Value[0], 0, kvp.Value[2]);
+                    blackPositions.Add(position);
                 }
-                else if (kvp.Key.Contains("hare"))
+                // Check if the key contains "white"
+                else if (kvp.Key.Contains("white"))
                 {
-                    Vector3 position = new Vector3(kvp.Value[0], 0, kvp.Value[1]);
-                    harePosition.Add(position); // Optional: Store position in a list if needed
+                    Vector3 position = new Vector3(kvp.Value[0], 0, kvp.Value[2]);
+                    whitePosition.Add(position);
                 }
             }
             print("Received list of positions!");
