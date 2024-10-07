@@ -99,6 +99,14 @@ public class PythonReceiver : MonoBehaviour
         {
             gameChanger = "Makvaer";
         }
+        if (dataReceived == ("Gaasetavl"))
+        {
+            gameChanger = "Gaasetavl";
+        }
+        if (dataReceived == ("Hundefterhare"))
+        {
+            gameChanger = "Hundefterhare";
+        }
         //Checks if the data read from above is a non empty string.
         if (!string.IsNullOrEmpty(dataReceived))
         {
