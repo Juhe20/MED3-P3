@@ -1,5 +1,11 @@
 import cv2
 import numpy as np
+import socket
+import json
+
+host, port = "127.0.0.1", 25001
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((host, port))
 
 #img = cv2.imread("Makvaer/Makvaer.png")
 #img = cv2.imread("Hund_efter_hare/boardplaying.png")
@@ -22,11 +28,8 @@ if detected_circles is not None:
     white  = 0
     black = 0
     circles = 0
-    pos = []
-    x = []
-    y = []
     colors = []
-
+    positiondata = {}
     for pt in detected_circles[0, :]:
         a, b, r = pt[0], pt[1], pt[2]
         circles = circles+1
@@ -37,9 +40,9 @@ if detected_circles is not None:
 
         # Draw a small circle (of radius 1) to show the center.
         cv2.circle(img, (a, b), 1, (0, 0, 255), 3)
-        x.append(a)
-        y.append(b)
-        pos = [x,y]
+
+
+
 #Lavet selv og med https://www.geeksforgeeks.org/circle-detection-using-opencv-python/
         # Get the color of the circle
         mask = np.zeros_like(img_gray)  # Create a mask for the current circle
@@ -54,20 +57,32 @@ if detected_circles is not None:
         average_color = np.mean(mean_color)  # Calculate average brightness
         if average_color < 128:  # Threshold for black (can adjust)
             black += 1
+            positiondata[f"black{black}"] = [a, 0, b]
         else:
             white += 1
+            positiondata[f"white{white}"] = [a, 0, b]
 #Lavet af Chat
 
+
     print(f"Number of circles: {circles}")
-    print(f"Each circles position: {pos}")
+    print(f"Positiondata: {positiondata}")
     print(f"Number of white circles: {white}")
     print(f"Number of black circles: {black}")
 
-if(white == 1 and black == 3):
+
+
+if white == 1 and black == 3:
     WhatGameIsIt = "HundEfterHare"
-elif(white == 2):
+elif white == 2:
     WhatGameIsIt = "Gaasetavl"
 else:
     WhatGameIsIt = "Makvaer"
+
+positions = json.dumps(positiondata)
+
+sock.sendall(positions.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
+sock.sendall(WhatGameIsIt.encode("UTF-8"))
+receivedData = sock.recv(1024).decode("UTF-8")  # receiving data in Byte from C#, and converting it to String
+print(receivedData)
 
 print(WhatGameIsIt)
