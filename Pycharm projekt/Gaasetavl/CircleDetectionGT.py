@@ -29,7 +29,7 @@ def detectAndCountCircles(path):
         threshold = 127
         pawn_list = {}
         pawn_type = ""
-        pawn_id = 0
+        pawn_id = 1
 
         for pt in detected_circles[0, :]:
             total_circles += 1
@@ -53,7 +53,7 @@ def detectAndCountCircles(path):
                 geese += 1
                 pawn_type = "black"
 
-            pawn_list[f'({pawn_type},{pawn_id})'] = (int(x),int(y))
+            pawn_list[f'{pawn_type}{pawn_id}'] = (int(x),int(y))
             pawn_id += 1
         return pawn_list
     else:
