@@ -1,13 +1,14 @@
 import cv2
 import numpy as np
-from cv2 import waitKey
 import socket
-import time
+import json
 
+#Host stuff to be able to send data to Unity
 host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
+#Images
 img = cv2.imread("board.png")
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 template = cv2.imread("template.png")
@@ -19,19 +20,19 @@ hvidtemplate_gray = cv2.cvtColor(hvidtemplate, cv2.COLOR_BGR2GRAY)
 sorttemplate = cv2.imread("sort.png")
 sorttemplate_gray = cv2.cvtColor(sorttemplate, cv2.COLOR_BGR2GRAY)
 
-#Match play area
+#Template matching for the play field
 resgray = cv2.matchTemplate(template_gray, img_gray, cv2.TM_CCOEFF_NORMED)
 threshold = 0.7  # Adjust threshold as needed
 yloc3, xloc3 = np.where(resgray >= threshold)
 height3, width3 = template_gray.shape
 
-#Match hvid
+#Template matches for the white piece
 res = cv2.matchTemplate(hvidtemplate_gray, imgplaying_gray, cv2.TM_CCOEFF_NORMED)
 threshold = 0.9  # Adjust threshold as needed
 yloc1, xloc1 = np.where(res >= threshold)
 height1, width1 = hvidtemplate_gray.shape
 
-#Match sort
+#Template mathes for the black pieces
 res2 = cv2.matchTemplate(sorttemplate_gray, imgplaying_gray, cv2.TM_CCOEFF_NORMED)
 threshold2 = 0.95  # Adjust threshold as needed
 yloc2, xloc2 = np.where(res2 >= threshold2)
@@ -40,28 +41,39 @@ height2, width2 = sorttemplate_gray.shape
 for (x, y) in zip(xloc3, yloc3):
     cv2.rectangle(img, (x, y), (x + width3, y + height3), (0, 255, 0), 2)
 
+#Get position of the white piece on the board
 hvidposition = []
 for (x, y) in zip(xloc1, yloc1):
     cv2.rectangle(imgplaying, (x, y), (x + width1, y + height1), (0, 255, 0), 2)
-    positiontuple = [x,y]
+    positiontuple = [int(x), int(y)]
     hvidposition.append(positiontuple)
 
+# Get position from each black piece on the board
 sortposition = []
-for (x, y) in zip(xloc2, yloc2):
+for index, (x, y) in enumerate(zip(xloc2, yloc2)):
     cv2.rectangle(imgplaying, (x, y), (x + width2, y + height2), (0, 0, 255), 2)
-    positiontuple = [int(x),int(y),0]
+    positiontuple = [int(x), int(y), 0]
     sortposition.append(positiontuple)
 
-while True:
-    time.sleep(0.5)  # sleep 0.5 sec
-    sortposition[0][0] += 1  # Increment x
-    sortposition[0][1] += 1  # Increment y
-    posString = ','.join(map(lambda v: f"{','.join(map(str, v))}", sortposition))
-    print(posString)
+#Create empty dictionary to fill in positions
+positiondata = {}
 
-    sock.sendall(posString.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
-    receivedData = sock.recv(1024).decode("UTF-8")  # receiveing data in Byte fron C#, and converting it to String
-    print(receivedData)
+# Adding key value pairs for dictionary for each position
+for i in range(len(sortposition)):
+    positiondata[f"dog{i + 1}"] = (sortposition[i][0], sortposition[i][1])
+
+# Add white position if hvidposition has at least one entry
+for i in range(len(hvidposition)):
+    positiondata[f"hare{i + 1}"] = (hvidposition[i][0], hvidposition[i][1])
+
+# Convert to JSON
+positions = json.dumps(positiondata)
+
+#Send data to Unity
+sock.sendall(positions.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
+receivedData = sock.recv(1024).decode("UTF-8")  # receiveing data in Byte fron C#, and converting it to String
+print(receivedData)
+
 
 
 
