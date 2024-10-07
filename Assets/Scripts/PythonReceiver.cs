@@ -23,6 +23,7 @@ public class PythonReceiver : MonoBehaviour
     bool running;
     public Camera camera;
     public GameObject playField;
+    private string gameChanger;
 
 
     private void Update()
@@ -48,6 +49,18 @@ public class PythonReceiver : MonoBehaviour
         camera.transform.position = new Vector3(playField.transform.position.x, 300f, playField.transform.position.z);
         camera.transform.LookAt(playField.transform.position);
 
+        if (gameChanger == "Makvaer")
+        {
+            SceneManager.LoadScene("Makvaer");
+        }
+        else if (gameChanger == "Hundefterhare")
+        {
+            SceneManager.LoadScene("Hundefterhare");
+        }
+        else if (gameChanger == "Gaasetavl")
+        {
+            SceneManager.LoadScene("Gaasetavl");
+        }
     }
 
     private void Start()
@@ -82,23 +95,9 @@ public class PythonReceiver : MonoBehaviour
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
         string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-        switch (dataReceived)
+        if (dataReceived == ("Makvaer"))
         {
-            case "Gaasetavl":
-                SceneManager.LoadScene("Gaasetavl");
-                break;
-
-            case "Makvaer":
-                SceneManager.LoadScene("Makvaer");
-                break;
-
-            case "Hundefterhare":
-                SceneManager.LoadScene("Hundefterhare");
-                break;
-
-            default:
-                Debug.Log($"Unknown command received: {dataReceived}");
-                break;
+            gameChanger = "Makvaer";
         }
         //Checks if the data read from above is a non empty string.
         if (!string.IsNullOrEmpty(dataReceived))
@@ -107,6 +106,8 @@ public class PythonReceiver : MonoBehaviour
             //Uses a dictionary to check for key-value pairs from the json string.
             //Enables the check of a string key to give the corresponding position.
             var receivedData = JsonConvert.DeserializeObject<Dictionary<string, List<float>>>(dataReceived);
+            
+            
             //Loop through all key value pairs and add the position to a list of that animal.
             foreach (var kvp in receivedData)
             {
