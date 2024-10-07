@@ -5,7 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/Gaasetavl.unity
+    guid: bd2bced6244d4be479bb2f6f272a4ab6
+  - enabled: 1
+    path: Assets/Scenes/Hundefterhare.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Makvaer.unity
+    guid: e999a26c5c7219c4bbd1d656f57f2d75
   m_configObjects: {}
