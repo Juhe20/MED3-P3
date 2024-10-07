@@ -48,10 +48,10 @@ def detectAndCountCircles(path):
 
             if mean_intensity > threshold:
                 foxes += 1
-                pawn_type = "fox"
+                pawn_type = "white"
             elif mean_intensity < threshold:
                 geese += 1
-                pawn_type = "goose"
+                pawn_type = "black"
 
             pawn_list[f'({pawn_type},{pawn_id})'] = (int(x),int(y))
             pawn_id += 1
@@ -62,6 +62,6 @@ def detectAndCountCircles(path):
 
 def dictToJson(dict):
     json_string = json.dumps(dict, indent=4)
-    print(json_string)
+    return json_string
 
-dictToJson(detectAndCountCircles("../Gaasetavl/Images/gaasetavl 1.png"))
+print(dictToJson(detectAndCountCircles("../Gaasetavl/Images/gaasetavl 1.png")))
