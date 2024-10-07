@@ -2,8 +2,7 @@ import cv2
 import numpy as np
 
 img = cv2.imread("Makvaer1.png", cv2.IMREAD_COLOR)
-
-# Convert to grayscale.
+# Convert to grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Blur using 3 * 3 kernel.
@@ -119,4 +118,5 @@ if detected_circles is not None:
     print(f"Number of black circles: {black}")
     print(f"Number of lines: {Lines}")
 cv2.imshow("Detected Circle", img)
+cv2.imshow("Edges", edges)
 cv2.waitKey(0)
