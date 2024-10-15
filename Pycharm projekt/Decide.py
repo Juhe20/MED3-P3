@@ -7,7 +7,7 @@ host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-img = cv2.imread("Makvaer/Makvaer.png")
+img = cv2.imread("Makvaer/Capture.PNG")
 #img = cv2.imread("Hund_efter_hare/boardplaying.png")
 #img = cv2.imread("Gaasetavl/Images/Gaasetavl.png")
 
