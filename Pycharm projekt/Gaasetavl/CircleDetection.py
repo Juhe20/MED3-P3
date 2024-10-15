@@ -26,8 +26,9 @@ def DetectAndCountCircles(path):
         geese = 0
         threshold1 = -1
         threshold2 = -1
+        pawnList = {}
 
-        for pt in detected_circles[0,:]:
+        for i, pt in detected_circles[0,:]:
             total_circles += 1
             a,b,r = pt[0], pt[1], pt[2]
             dot_color = (0,0,255)
@@ -88,4 +89,4 @@ def DetectAndCountCircles(path):
         print("Error: detected_circles = None")
         return None
 
-#DetectAndCountCircles("../Gaasetavl/Images/gaasetavl 1.png")
+DetectAndCountCircles("../Gaasetavl/Images/gaasetavl 1.png")
