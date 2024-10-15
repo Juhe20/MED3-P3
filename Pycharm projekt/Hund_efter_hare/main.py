@@ -3,12 +3,8 @@ import numpy as np
 import socket
 import json
 
-#Host stuff to be able to send data to Unity
-host, port = "127.0.0.1", 25001
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((host, port))
+from cv2 import waitKey
 
-#Images
 img = cv2.imread("board.png")
 img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 template = cv2.imread("template.png")
@@ -66,13 +62,12 @@ for i in range(len(sortposition)):
 for i in range(len(hvidposition)):
     positiondata[f"hare{i + 1}"] = (hvidposition[i][0], hvidposition[i][1])
 
+cv2.imshow("plade", img)
+waitKey()
 # Convert to JSON
 positions = json.dumps(positiondata)
 
-#Send data to Unity
-sock.sendall(positions.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
-receivedData = sock.recv(1024).decode("UTF-8")  # receiveing data in Byte fron C#, and converting it to String
-print(receivedData)
+
 
 
 
