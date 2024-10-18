@@ -285,6 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a7412c229398a248b606fa6872bf23b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ogPosMatirial: {fileID: 2100000, guid: 1a85d1f2bc46c78498b56ea22cd4728e, type: 2}
   locationController: {fileID: 476905851}
   currState: 0
 --- !u!1 &1905005705

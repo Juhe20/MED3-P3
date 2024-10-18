@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.ReorderableList;
 using UnityEngine;
 
 public class PawnMovement : MonoBehaviour
 {
+    [SerializeField] Material ogPosMatirial;
     public LocationController locationController;
     public enum state
     {
@@ -17,6 +19,8 @@ public class PawnMovement : MonoBehaviour
     public state currState = state.WHITE_SELECT;
     List<List<GameObject>> posList;
     List<GameObject> possibleMoves;
+
+    GameObject selectedPawn;
 
     // Start is called before the first frame update
     void Start()
@@ -47,7 +51,8 @@ public class PawnMovement : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    GameObject clicked = clickPawn();
+                    GameObject clicked = clickObject();
+                    selectedPawn = clicked;
                     if (clicked != null)
                     {
                         if (clicked.CompareTag("whitePawn"))
@@ -76,6 +81,27 @@ public class PawnMovement : MonoBehaviour
 
             case (state.WHITE_MOVE):
                 
+                if (Input.GetMouseButtonDown(0))
+                {
+                    GameObject clicked = clickObject();
+
+                    for (int i = 0; i < possibleMoves.Count; i++)
+                    {
+                        if (clicked.Equals(possibleMoves[i]))
+                        {
+                            selectedPawn.transform.position = possibleMoves[i].transform.position;
+                            currState = state.BLACK_SELECT;
+                        }
+                        else
+                        {
+                            Debug.Log("invalid move/one of the others in the list");
+                        }
+                        possibleMoves[i].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                    }
+                    possibleMoves.Clear();
+                    Debug.Log(possibleMoves.Count);
+                }
+
                 break;
 
             case (state.WHITE_WON):
@@ -97,7 +123,7 @@ public class PawnMovement : MonoBehaviour
         }
     }
 
-    GameObject clickPawn()
+    GameObject clickObject()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
