@@ -36,7 +36,6 @@ public class PawnMovement : MonoBehaviour
         }
 
         posList = locationController.posList;
-        Debug.Log(posList.Count);
     }
 
     // Update is called once per frame
@@ -53,28 +52,31 @@ public class PawnMovement : MonoBehaviour
                 {
                     GameObject clicked = clickObject();
                     selectedPawn = clicked;
-                    if (clicked != null)
+                    if (selectedPawn != null)
                     {
-                        if (clicked.CompareTag("whitePawn"))
+                        if (selectedPawn.CompareTag("whitePawn"))
                         {
-                            PawnClass pawnClass = clicked.GetComponent<PawnClass>();
+                            PawnClass pawnClass = selectedPawn.GetComponent<PawnClass>();
                             if (pawnClass != null)
                             {
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()].GetComponent<PosClass>();
+                                //Debug.Log("X: "+pawnClass.getListX());
+                                //Debug.Log("Y: " + pawnClass.getListY());
                                 if (posClass != null)
                                 {
                                     possibleMoves = calculatePossibleWhiteMoves(posClass);
+                                    currState = state.WHITE_MOVE;
                                 }
                             }
                             else Debug.Log("idk");
                         }
                         else
                         {
-                            Debug.Log("something else clicked");
+                            Debug.Log("not white pawn clicked");
                         }
                     }
 
-                    currState = state.WHITE_MOVE;
+                    
                 }
 
                 break;
@@ -90,16 +92,38 @@ public class PawnMovement : MonoBehaviour
                         if (clicked.Equals(possibleMoves[i]))
                         {
                             selectedPawn.transform.position = possibleMoves[i].transform.position;
-                            currState = state.BLACK_SELECT;
+
+                            //update the data for the posobjects and the pawn object
+                            PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
+                            PosClass currPosClass = possibleMoves[i].GetComponent<PosClass>(); // get the class that hold the info
+                            Debug.Log(selectedPawnClass);
+                            Debug.Log(currPosClass);
+                            if (selectedPawnClass != null && currPosClass != null)
+                            {
+                                PosClass originPosClass = posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()].GetComponent<PosClass>(); // get the class for the pos object it was standing on
+                                originPosClass.setOccupied(false); //update its occupied variable
+
+                                selectedPawnClass.setListX(currPosClass.getListX()); //set the selected pawns x pos to the new pos
+                                selectedPawnClass.setListY((currPosClass.getListY()));//set the selected pawns y pos to the new pos
+
+                                currPosClass.setOccupied(true); //set the new pos objects occupied to true.
+
+                            }
+                            else Debug.Log("fuck");
+                            for (int j = 0; j < possibleMoves.Count; j++)
+                            {
+                                possibleMoves[j].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                                
+                            }
+                            possibleMoves.Clear();
+                            currState = state.BLACK_SELECT; //set the state to the next
+                            break;
                         }
                         else
                         {
                             Debug.Log("invalid move/one of the others in the list");
                         }
-                        possibleMoves[i].GetComponent<MeshRenderer>().material = ogPosMatirial;
                     }
-                    possibleMoves.Clear();
-                    Debug.Log(possibleMoves.Count);
                 }
 
                 break;
@@ -110,11 +134,81 @@ public class PawnMovement : MonoBehaviour
 
             //black states
             case (state.BLACK_SELECT):
+                if (Input.GetMouseButtonDown(0))
+                {
+                    GameObject clicked = clickObject();
+                    selectedPawn = clicked;
+                    if (selectedPawn != null)
+                    {
+                        if (selectedPawn.CompareTag("blackPawn"))
+                        {
+                            PawnClass pawnClass = selectedPawn.GetComponent<PawnClass>();
+                            if (pawnClass != null)
+                            {
+                                PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()].GetComponent<PosClass>();
+                                //Debug.Log("X: "+pawnClass.getListX());
+                                //Debug.Log("Y: " + pawnClass.getListY());
+                                if (posClass != null)
+                                {
+                                    possibleMoves = calculatePossibleBlackMoves(posClass);
+                                    currState = state.BLACK_MOVE;
+                                }
+                            }
+                            else Debug.Log("idk");
+                        }
+                        else
+                        {
+                            Debug.Log("not white pawn clicked");
+                        }
+                    }
 
+
+                }
                 break;
 
             case (state.BLACK_MOVE):
+                if (Input.GetMouseButtonDown(0))
+                {
+                    GameObject clicked = clickObject();
 
+                    for (int i = 0; i < possibleMoves.Count; i++)
+                    {
+                        if (clicked.Equals(possibleMoves[i]))
+                        {
+                            selectedPawn.transform.position = possibleMoves[i].transform.position;
+
+                            //update the data for the posobjects and the pawn object
+                            PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
+                            PosClass currPosClass = possibleMoves[i].GetComponent<PosClass>(); // get the class that hold the info
+                            Debug.Log(selectedPawnClass);
+                            Debug.Log(currPosClass);
+                            if (selectedPawnClass != null && currPosClass != null)
+                            {
+                                PosClass originPosClass = posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()].GetComponent<PosClass>(); // get the class for the pos object it was standing on
+                                originPosClass.setOccupied(false); //update its occupied variable
+
+                                selectedPawnClass.setListX(currPosClass.getListX()); //set the selected pawns x pos to the new pos
+                                selectedPawnClass.setListY((currPosClass.getListY()));//set the selected pawns y pos to the new pos
+
+                                currPosClass.setOccupied(true); //set the new pos objects occupied to true.
+
+                            }
+                            else Debug.Log("fuck");
+                            for (int j = 0; j < possibleMoves.Count; j++)
+                            {
+                                possibleMoves[j].GetComponent<MeshRenderer>().material = ogPosMatirial;
+
+                            }
+                            possibleMoves.Clear();
+                            currState = state.WHITE_SELECT; //set the state to the next
+                            break;
+                        }
+                        else
+                        {
+                            Debug.Log("invalid move/one of the others in the list");
+                        }
+                    }
+                }
                 break;
 
             case (state.BLACK_WON):
@@ -148,7 +242,8 @@ public class PawnMovement : MonoBehaviour
         int currY = currPos.getListY();
 
         List<GameObject> calculatedMoves = new List<GameObject>();
-        List<List<int>> evenListToCheck = new List<List<int>>()
+        List<List<int>> movesToCheck;
+        List<List<int>> evenMoves = new List<List<int>>()
         {
             //straights
             new List<int> {currX-2,currY},//up
@@ -159,42 +254,107 @@ public class PawnMovement : MonoBehaviour
             new List<int> {currX-1,currY-1},//up left
             new List<int> {currX+1,currY-1},//down left
             new List<int> {currX-1,currY},//up right
-            new List<int> {currX+1,currY},//down right
+            new List<int> {currX+1,currY}//down right
+        };
+        List<List<int>> oddMoves = new List<List<int>>()
+        {
+            //diagonals
+            new List<int> {currX-1,currY},//up left
+            new List<int> {currX+1,currY},//down left
+            new List<int> {currX-1,currY+1},//up right
+            new List<int> {currX+1,currY+1}//down right
         };
 
-        if (currX % 2 == 0) //to check if it is the short or long rows
-        {
-            for (int i = 0; i < evenListToCheck.Count; i++)
-            {
-                int currListX = evenListToCheck[i][0];
-                int currListY = evenListToCheck[i][1];
+        if (currX % 2 == 0) movesToCheck = evenMoves; else movesToCheck = oddMoves;
 
-                if (currListX >= 0 && currListX < posList.Count && currListY >= 0 && currListY < posList[currListX].Count)
+
+        for (int i = 0; i < movesToCheck.Count; i++)
+        {
+            int currListX = movesToCheck[i][0];
+            int currListY = movesToCheck[i][1];
+
+            if (currListX >= 0 && currListX < posList.Count && currListY >= 0 && currListY < posList[currListX].Count)
+            {
+                GameObject currPosObj = posList[currListX][currListY];
+                if (currPosObj != null)
                 {
-                    GameObject currPosObj = posList[currListX][currListY];
-                    if (currPosObj != null)
+                    PosClass posClass = currPosObj.GetComponent<PosClass>();
+                    if (posClass != null)
                     {
-                        PosClass posClass = currPosObj.GetComponent<PosClass>();
-                        if (posClass != null)
+                        if (!posClass.getOccupied())
                         {
-                            if (!posClass.getOccupied())
-                            {
-                                currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
-                                calculatedMoves.Add(currPosObj);
-                            }
+                            currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                            calculatedMoves.Add(currPosObj);
                         }
-                        else Debug.Log("no posclass");
                     }
+                    else Debug.Log("no posclass");
                 }
-                else continue;
-                
             }
+            else continue;
+                
         }
+        
         return calculatedMoves;
     }
 
-    void calculatePossibleBlackMoves()
+    List<GameObject> calculatePossibleBlackMoves(PosClass currPos)
     {
+        int currX = currPos.getListX();
+        int currY = currPos.getListY();
 
+        List<GameObject> calculatedMoves = new List<GameObject>();
+        List<List<int>> movesToCheck;
+        List<List<int>> evenMoves = new List<List<int>>()
+        {
+            //straights
+            new List<int> {currX-2,currY},//up
+            new List<int> {currX+2,currY},//down
+            new List<int> {currX,currY-1},//left
+            new List<int> {currX,currY+1},//right
+            //diagonals
+            new List<int> {currX-1,currY-1},//up left
+            new List<int> {currX+1,currY-1},//down left
+            new List<int> {currX-1,currY},//up right
+            new List<int> {currX+1,currY}//down right
+        };
+        List<List<int>> oddMoves = new List<List<int>>()
+        {
+            //diagonals
+            new List<int> {currX-1,currY},//up left
+            new List<int> {currX+1,currY},//down left
+            new List<int> {currX-1,currY+1},//up right
+            new List<int> {currX+1,currY+1}//down right
+        };
+
+        if (currX % 2 == 0) movesToCheck = evenMoves; else movesToCheck = oddMoves;
+
+
+        for (int i = 0; i < movesToCheck.Count; i++)
+        {
+            int currListX = movesToCheck[i][0];
+            int currListY = movesToCheck[i][1];
+
+            if (currListX >= 0 && currListX < posList.Count && currListY >= 0 && currListY < posList[currListX].Count)
+            {
+                GameObject currPosObj = posList[currListX][currListY];
+                if (currPosObj != null)
+                {
+                    PosClass posClass = currPosObj.GetComponent<PosClass>();
+                    if (posClass != null)
+                    {
+                        if (!posClass.getOccupied())
+                        {
+                            currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                            calculatedMoves.Add(currPosObj);
+                        }
+                    }
+                    else Debug.Log("no posclass");
+                }
+            }
+            else continue;
+
+        }
+
+        return calculatedMoves;
     }
 }

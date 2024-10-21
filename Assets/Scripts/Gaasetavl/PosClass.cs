@@ -7,6 +7,7 @@ public class PosClass : MonoBehaviour
     public int x;
     public int y;
     public bool occupied = false;
+    public string occupiedBy = string.Empty;
 
     public int getListX()
     {
@@ -35,6 +36,16 @@ public class PosClass : MonoBehaviour
     public void setOccupied(bool occupied)
     {
         this.occupied = occupied;
+    }
+
+    public string getOccupiedBy()
+    {
+        return occupiedBy;
+    }
+
+    public void setOccupiedBy(string newType)
+    {
+        occupiedBy = newType;
     }
 
 }
