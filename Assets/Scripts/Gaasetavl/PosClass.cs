@@ -28,24 +28,4 @@ public class PosClass : MonoBehaviour
         this.y = y;
     }
 
-    public bool getOccupied()
-    {
-        return occupied;
-    }
-
-    public void setOccupied(bool occupied)
-    {
-        this.occupied = occupied;
-    }
-
-    public string getOccupiedBy()
-    {
-        return occupiedBy;
-    }
-
-    public void setOccupiedBy(string newType)
-    {
-        occupiedBy = newType;
-    }
-
 }

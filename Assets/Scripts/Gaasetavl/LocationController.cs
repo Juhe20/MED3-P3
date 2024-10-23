@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class LocationController : MonoBehaviour
 {
-    public List<List<GameObject>> posList = new List<List<GameObject>>();
+    public List<List<List<GameObject>>> posList = new List<List<List<GameObject>>>();
     [SerializeField] GameObject posPrefab;
     //[SerializeField] GameObject posVisualPrefab;
     [SerializeField] GameObject board;
@@ -23,12 +23,12 @@ public class LocationController : MonoBehaviour
 
         for (int i = 0; i < 13; i++)
         {
-            posList.Add(new List<GameObject>());
+            posList.Add(new List<List<GameObject>>());
             if (i % 2 == 0) //For even rows(row 0, 2, 4 etc.)
             {
                 for (int j = 0; j < 7; j++)
                 {
-                    posList[i].Add(null);
+                    posList[i].Add(new List<GameObject> { null, null });
                 }
 
                 if (i >= 4 && i <= 8) //For the middle long part
@@ -62,7 +62,7 @@ public class LocationController : MonoBehaviour
             {
                 for (int j = 0; j < 6; j++)
                 {
-                    posList[i].Add(null);
+                    posList[i].Add(new List<GameObject> { null, null });
                 }
 
                 if (i >= 4 && i <= 8) //For the middle long part
@@ -102,16 +102,16 @@ public class LocationController : MonoBehaviour
             stringToPrint += "\n";
             for (int j = 0; j < posList[i].Count; j++)
             {
-                if (posList[i][j] != null)
+                if (posList[i][j][0] != null)
                 {
-                    stringToPrint += posList[i][j].name;
+                    stringToPrint += posList[i][j][0].name; //This line says nullreference expection
                 } else
                 {
                     stringToPrint += "null";
                 }
             }
         }
-        Debug.Log(stringToPrint);
+        //Debug.Log(stringToPrint);
     }
 
 
@@ -131,17 +131,17 @@ public class LocationController : MonoBehaviour
 
         if (pos == (0,2) || pos == (0, 4)) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
         {
-            createPawn(wPawnPrefab,currObj,i,j,posClass,"white");
+            createPawn(wPawnPrefab,currObj,i,j,posClass);
         }
         else if (i > 3 && i % 2 == 0)
         {
-            createPawn(bPawnPrefab, currObj,i,j,posClass, "black");
+            createPawn(bPawnPrefab, currObj,i,j,posClass);
         }
 
-        posList[i][j] = currObj;
+        posList[i][j][0] = currObj;
     }
 
-    void createPawn(GameObject prefab,GameObject posObj,int i, int j, PosClass currPosObj, string type)
+    void createPawn(GameObject prefab,GameObject posObj,int i, int j, PosClass currPosObj)
     {
         if (posObj != null) //just a safe null check
         {
@@ -150,9 +150,8 @@ public class LocationController : MonoBehaviour
             PawnClass pawnClass = currObj.GetComponent<PawnClass>();
             pawnClass.setListX(i);
             pawnClass.setListY(j);
-            currPosObj.setOccupiedBy(type);
-            
-            currPosObj.setOccupied(true);
+
+            posList[i][j][1] = currObj;
         }
     }
 }
