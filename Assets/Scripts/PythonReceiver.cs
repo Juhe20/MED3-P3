@@ -33,18 +33,10 @@ public class PythonReceiver : MonoBehaviour
         camera.transform.LookAt(playField.transform.position);
 
         //Checks if the string has been changed to a game name and loads the scene for that game
-        if (gameChanger == "Makvaer")
-        {
-            SceneManager.LoadScene("Makvaer");
-        }
-        else if (gameChanger == "Hundefterhare")
-        {
-            SceneManager.LoadScene("Hundefterhare");
-        }
-        else if (gameChanger == "Gaasetavl")
-        {
-            SceneManager.LoadScene("Gaasetavl");
-        }
+        //if(gameChanger != null)
+        //{
+        //    SceneManager.LoadScene(gameChanger);
+        //}
 
         //2 checks to see if the Python script send any positions for either black or white pieces.
         if (blackPositions.Count >= 0)
