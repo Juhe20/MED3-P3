@@ -119,7 +119,7 @@ public class LocationController : MonoBehaviour
     {
         (int, int) pos = (i, j);
         //instansiate object
-        GameObject currObj = Instantiate(posPrefab, new Vector3(x,0.5f,z),Quaternion.Euler(0,0,0));
+        GameObject currObj = Instantiate(posPrefab, new Vector3(x,0f,z),Quaternion.Euler(0,0,0));
         currObj.transform.SetParent(board.transform);
 
         PosClass posClass = currObj.GetComponent<PosClass>();
@@ -145,7 +145,7 @@ public class LocationController : MonoBehaviour
     {
         if (posObj != null) //just a safe null check
         {
-            GameObject currObj = Instantiate(prefab, posObj.transform.position, Quaternion.Euler(0,0,0));
+            GameObject currObj = Instantiate(prefab,new Vector3(posObj.transform.position.x,posObj.transform.position.y+0.5f,posObj.transform.position.z), Quaternion.Euler(0,0,0));
             currObj.transform.SetParent(board.transform);
             PawnClass pawnClass = currObj.GetComponent<PawnClass>();
             pawnClass.setListX(i);

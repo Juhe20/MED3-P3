@@ -54,6 +54,7 @@ public class PawnMovement : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     GameObject clicked = clickObject();
+                    Debug.Log(clicked.tag);
                     selectedPawn = clicked;
                     if (selectedPawn != null)
                     {
@@ -65,7 +66,9 @@ public class PawnMovement : MonoBehaviour
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
                                 if (posClass != null)
                                 {
+                                    Debug.Log("her");
                                     possibleMoves = cm.calculatePossibleMoves(posClass,selectedPawn,posList,currState);
+                                    Debug.Log(possibleMoves.Count);
                                     if (possibleMoves.Count == 0) currState = state.WHITE_SELECT; else currState = state.WHITE_MOVE;
                                 }
                             }
@@ -90,7 +93,7 @@ public class PawnMovement : MonoBehaviour
                                 Destroy(possibleMoves[i][1]);
                             }
 
-                            selectedPawn.transform.position = possibleMoves[i][0].transform.position;
+                            selectedPawn.transform.position = new Vector3 (possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y+0.5f, possibleMoves[i][0].transform.position.z);
 
                             //update the data for the posobjects and the pawn object
                             PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
@@ -170,7 +173,7 @@ public class PawnMovement : MonoBehaviour
                     {
                         if (clicked.Equals(possibleMoves[i][0]))
                         {
-                            selectedPawn.transform.position = possibleMoves[i][0].transform.position;
+                            selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
 
                             //update the data for the posobjects and the pawn object
                             PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
