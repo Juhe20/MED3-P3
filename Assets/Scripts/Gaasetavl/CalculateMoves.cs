@@ -124,7 +124,7 @@ public class CalculateMoves : MonoBehaviour
         int currListXHere = attackMovesToCheck[listIteration][0];
         int currListYHere = attackMovesToCheck[listIteration][1];
 
-        if (currListXHere >= 0 && currListYHere >= 0 && currListXHere < posList.Count && currListYHere < posList[currListXHere].Count && posList[currListXHere][currListYHere][1] == null && blackPawn != null)
+        if (currListXHere >= 0 && currListYHere >= 0 && currListXHere < posList.Count && currListYHere < posList[currListXHere].Count && posList[currListXHere][currListYHere][1] == null && blackPawn != null && posList[currListXHere][currListYHere][0] != null)
         {
             attackMove.Add(posList[currListXHere][currListYHere][0]);
             attackMove.Add(blackPawn);
