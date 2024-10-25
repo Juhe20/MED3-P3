@@ -133,7 +133,7 @@ public class LocationController : MonoBehaviour
         {
             createPawn(wPawnPrefab,currObj,i,j,posClass);
         }
-        else if (i > 3 && i % 2 == 0)
+        else if (i > 4 && i % 2 == 0)
         {
             createPawn(bPawnPrefab, currObj,i,j,posClass);
         }
