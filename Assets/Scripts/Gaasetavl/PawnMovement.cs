@@ -8,6 +8,8 @@ public class PawnMovement : MonoBehaviour
 {
     [SerializeField] Material ogPosMatirial;
     public LocationController locationController;
+    [SerializeField] CalculateMoves cm;
+
     public enum state
     {
         WHITE_SELECT,
@@ -61,11 +63,9 @@ public class PawnMovement : MonoBehaviour
                             if (pawnClass != null)
                             {
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
-                                //Debug.Log("X: "+pawnClass.getListX());
-                                //Debug.Log("Y: " + pawnClass.getListY());
                                 if (posClass != null)
                                 {
-                                    possibleMoves = calculatePossibleMoves(posClass);
+                                    possibleMoves = cm.calculatePossibleMoves(posClass,selectedPawn,posList,currState);
                                     currState = state.WHITE_MOVE;
                                 }
                             }
@@ -139,11 +139,9 @@ public class PawnMovement : MonoBehaviour
                             if (pawnClass != null)
                             {
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
-                                //Debug.Log("X: "+pawnClass.getListX());
-                                //Debug.Log("Y: " + pawnClass.getListY());
                                 if (posClass != null)
                                 {
-                                    possibleMoves = calculatePossibleMoves(posClass);
+                                    possibleMoves = cm.calculatePossibleMoves(posClass,selectedPawn,posList,currState);
                                     currState = state.BLACK_MOVE;
                                 }
                             }
@@ -205,17 +203,16 @@ public class PawnMovement : MonoBehaviour
         if (Physics.Raycast(ray, out hit))
         {
             GameObject hitObject = hit.transform.gameObject;
-            //Debug.Log("hit object:" + hitObject);
 
             return hitObject;
         }
         else
         {
-            //Debug.Log("no object hit");
             return null;
         }
     }
 
+    /*
     List<List<GameObject>> calculatePossibleMoves(PosClass currPos)
     {
         int currX = currPos.getListX();
@@ -289,7 +286,7 @@ public class PawnMovement : MonoBehaviour
                                 currListX,
                                 currListY,
                                 i);
-                            if (data != null) calculatedMoves.Add(data); else Debug.Log("data not added ");
+                            if (data != null) calculatedMoves.Add(data);
                         }
                     }
                 }
@@ -337,10 +334,10 @@ public class PawnMovement : MonoBehaviour
             attackMove.Add(posList[currListXHere][currListYHere][0]);
             attackMove.Add(blackPawn);
             posList[currListXHere][currListYHere][0].GetComponent<MeshRenderer>().material.color = Color.red;
-            Debug.Log(attackMove[0]+"     " +attackMove[1]);
 
             return attackMove;
         }
         else return null;
     }
+    */
 }
