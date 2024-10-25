@@ -66,7 +66,7 @@ public class PawnMovement : MonoBehaviour
                                 if (posClass != null)
                                 {
                                     possibleMoves = cm.calculatePossibleMoves(posClass,selectedPawn,posList,currState);
-                                    currState = state.WHITE_MOVE;
+                                    if (possibleMoves.Count == 0) currState = state.WHITE_SELECT; else currState = state.WHITE_MOVE;
                                 }
                             }
                         }
@@ -153,7 +153,7 @@ public class PawnMovement : MonoBehaviour
                                 if (posClass != null)
                                 {
                                     possibleMoves = cm.calculatePossibleMoves(posClass,selectedPawn,posList,currState);
-                                    currState = state.BLACK_MOVE;
+                                    if (possibleMoves.Count == 0) currState = state.BLACK_SELECT; else currState = state.BLACK_MOVE;
                                 }
                             }
                         }
@@ -209,7 +209,6 @@ public class PawnMovement : MonoBehaviour
                     possibleMoves.Clear();
                     currState = state.BLACK_SELECT; //set the state to the next
                 }
-
                 break;
 
             case (state.BLACK_WON):
