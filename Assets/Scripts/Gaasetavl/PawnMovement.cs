@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using TMPro;
 using Unity.VisualScripting.ReorderableList;
 using UnityEditor.Search;
 using UnityEngine;
+using TMPro;
 
 public class PawnMovement : MonoBehaviour
 {
     [SerializeField] Material ogPosMatirial;
     public LocationController locationController;
     [SerializeField] CalculateMoves cm;
+    [SerializeField] TimerController timerController;
+    [SerializeField] TextMeshProUGUI timerText;
+    [SerializeField] float timerTime;
 
     public enum state
     {
@@ -29,6 +35,7 @@ public class PawnMovement : MonoBehaviour
     void Start()
     {
        StartCoroutine(WaitForLocationController());
+        timerController.timeLeft = timerTime;
     }
     private IEnumerator WaitForLocationController()
     {
@@ -44,7 +51,13 @@ public class PawnMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //check if a pawn is clicked
+        //check if the time is up
+        if (timerController.timeLeft == 0) currState = state.BLACK_WON;
+        
+        //check how many black are left
+        GameObject[] blackPawnsLeft = GameObject.FindGameObjectsWithTag("blackPawn");
+        if (blackPawnsLeft.Length == 0) currState = state.WHITE_WON;
+
 
         switch (currState)
         {
@@ -53,8 +66,10 @@ public class PawnMovement : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
+                    //Start the timer if it hasn't been started
+                    if (timerController.timerOn == false) timerController.timerOn = true;
+
                     GameObject clicked = clickObject();
-                    Debug.Log(clicked.tag);
                     selectedPawn = clicked;
                     if (selectedPawn != null)
                     {
@@ -66,9 +81,7 @@ public class PawnMovement : MonoBehaviour
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
                                 if (posClass != null)
                                 {
-                                    Debug.Log("her");
                                     possibleMoves = cm.calculatePossibleMoves(posClass,selectedPawn,posList,currState);
-                                    Debug.Log(possibleMoves.Count);
                                     if (possibleMoves.Count == 0) currState = state.WHITE_SELECT; else currState = state.WHITE_MOVE;
                                 }
                             }
@@ -136,7 +149,13 @@ public class PawnMovement : MonoBehaviour
                 break;
 
             case (state.WHITE_WON):
-                
+                timerText.text = "The Foxes Slays!";
+                for (int i = 0; i < possibleMoves.Count; i++)
+                {
+                    possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+
+                }
+                possibleMoves.Clear();
                 break;
 
             //black states
@@ -171,33 +190,36 @@ public class PawnMovement : MonoBehaviour
 
                     for (int i = 0; i < possibleMoves.Count; i++)
                     {
-                        if (clicked.Equals(possibleMoves[i][0]))
+                        if (clicked != null)
                         {
-                            selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
-
-                            //update the data for the posobjects and the pawn object
-                            PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
-                            PosClass currPosClass = possibleMoves[i][0].GetComponent<PosClass>(); // get the class that hold the info
-                            if (selectedPawnClass != null && currPosClass != null)
+                            if (clicked.Equals(possibleMoves[i][0]))
                             {
-                                PosClass originPosClass = posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][0].GetComponent<PosClass>(); // get the class for the pos object it was standing on
+                                selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
 
-                                posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][1] = null;
+                                //update the data for the posobjects and the pawn object
+                                PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
+                                PosClass currPosClass = possibleMoves[i][0].GetComponent<PosClass>(); // get the class that hold the info
+                                if (selectedPawnClass != null && currPosClass != null)
+                                {
+                                    PosClass originPosClass = posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][0].GetComponent<PosClass>(); // get the class for the pos object it was standing on
 
-                                selectedPawnClass.setListX(currPosClass.getListX()); //set the selected pawns x pos to the new pos
-                                selectedPawnClass.setListY((currPosClass.getListY()));//set the selected pawns y pos to the new pos
+                                    posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][1] = null;
 
-                                posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][1] = selectedPawn;
+                                    selectedPawnClass.setListX(currPosClass.getListX()); //set the selected pawns x pos to the new pos
+                                    selectedPawnClass.setListY((currPosClass.getListY()));//set the selected pawns y pos to the new pos
 
+                                    posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][1] = selectedPawn;
+
+                                }
+                                for (int j = 0; j < possibleMoves.Count; j++)
+                                {
+                                    possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+
+                                }
+                                possibleMoves.Clear();
+                                currState = state.WHITE_SELECT; //set the state to the next
+                                break;
                             }
-                            for (int j = 0; j < possibleMoves.Count; j++)
-                            {
-                                possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
-
-                            }
-                            possibleMoves.Clear();
-                            currState = state.WHITE_SELECT; //set the state to the next
-                            break;
                         }
                     }
                 }
@@ -215,7 +237,13 @@ public class PawnMovement : MonoBehaviour
                 break;
 
             case (state.BLACK_WON):
+                timerText.text = "The Geese Slays!";
+                for (int i = 0; i < possibleMoves.Count; i++)
+                {
+                    possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
 
+                }
+                possibleMoves.Clear();
                 break;
         }
     }

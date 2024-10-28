@@ -6815,7 +6815,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7058920202257258601}
-  - component: {fileID: 6174859220339424250}
   - component: {fileID: 8397370121240043832}
   - component: {fileID: 763402503329555338}
   - component: {fileID: 626372776444921527}
@@ -6936,27 +6935,6 @@ Transform:
   - {fileID: 87698918123320161}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &6174859220339424250
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7691446858403480275}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &8397370121240043832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6969,7 +6947,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f473d6ab45d88904885574a6236c1049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posPrefab: {fileID: 1617949561924666842, guid: 39e863c23364495419ced14d4b6d7d04, type: 3}
+  posPrefab: {fileID: 1858206849530377696, guid: 66a73370d2ae44e41be65910a2045565, type: 3}
   board: {fileID: 7691446858403480275}
   bPawnPrefab: {fileID: 4543877304329013654, guid: 1fefb56a0d492e64dbefeee99aac69a9, type: 3}
   wPawnPrefab: {fileID: 8884489395392381346, guid: 22cc6b00d5ffce04684c1577fae3975f, type: 3}
@@ -7001,6 +6979,9 @@ MonoBehaviour:
   ogPosMatirial: {fileID: 2100000, guid: 8249928dd09442c42b823cb09955ff4e, type: 2}
   locationController: {fileID: 8397370121240043832}
   cm: {fileID: 763402503329555338}
+  timerController: {fileID: 0}
+  timerText: {fileID: 0}
+  timerTime: 600
   currState: 0
 --- !u!1 &7786779582808808035
 GameObject:
