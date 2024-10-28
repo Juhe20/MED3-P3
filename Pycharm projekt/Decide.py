@@ -8,18 +8,44 @@ host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-# Load the image (you can uncomment whichever board you want to test)
+# Load image
 #img = cv2.imread("Hund_efter_hare/boardplaying.png")
-#img = cv2.imread("Makvaer/Capture.PNG")
-img = cv2.imread("Gaasetavl/Images/Gaasetavl 5.png")
+img = cv2.imread("Makvaer/IMG_0830.jpg")
+#img = cv2.imread("Gaasetavl/Images/Gaasetavl 5.png")
+img = cv2.resize(img, (600, 800))
 
-# Convert the image to grayscale
-img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#Grabcut for background removal
+# Create an initial mask
+mask = np.zeros(img.shape[:2], np.uint8)
 
-# Apply Gaussian blur to reduce noise
+# Define a rectangle containing the foreground (board area)
+rect = (50, 50, img.shape[1] - 100, img.shape[0] - 100)  # Adjust based on the board size
+background = np.zeros((1, 65), np.float64)
+foreground = np.zeros((1, 65), np.float64)
+
+# Apply the GrabCut algorithm to segment the foreground (board + pieces)
+cv2.grabCut(img, mask, rect, background, foreground, 5, cv2.GC_INIT_WITH_RECT)
+
+# Create a mask where sure background (0) and possible background (2) are set to 0,
+# and sure foreground (1) and possible foreground (3) are set to 1
+mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+
+# Apply mask to extract the foreground (the board and pieces)
+img_foreground = img * mask2[:, :, np.newaxis]
+
+# Convert the image to BGRA (to include transparency)
+img_transparent = cv2.cvtColor(img_foreground, cv2.COLOR_BGR2BGRA)
+
+# Set alpha (transparency) based on the mask
+img_transparent[:, :, 3] = mask2 * 255
+
+#Board and piece detection
+img_gray = cv2.cvtColor(img_foreground, cv2.COLOR_BGR2GRAY)
+
+# Gaussian blur
 blurred = cv2.GaussianBlur(img_gray, (5, 5), 0)
 
-# Apply Canny edge detection to the blurred image
+# Canny edge detection
 edges = cv2.Canny(blurred, 50, 150)
 
 # Use morphological operations to clean up the edges and reduce the impact of pieces
@@ -36,7 +62,6 @@ else:
     # Find the largest contour (this should correspond to the board)
     largest_contour = max(contours, key=cv2.contourArea)
 
-    # Approximate the contour to reduce the number of points and simplify the shape
     # Approximate the contour to simplify the shape
     epsilon = 0.02 * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
@@ -68,7 +93,6 @@ else:
     x, y, w, h = cv2.boundingRect(largest_contour)
     print(f"Bounding box dimensions: {w}x{h}")
 
-    # Optionally, you can now proceed with further processing, e.g., detecting the pieces
     # Hough Circle Transform for piece detection (after detecting the board)
     detected_circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 0.2, 20, param1=55, param2=30, minRadius=1, maxRadius=30)
 
@@ -117,9 +141,9 @@ else:
     print(f"Number of white circles: {white}")
     print(f"Number of black circles: {black}")
 
-    if solidity<0.9:
+    if solidity < 0.9:
         WhatGameIsIt = "Gaasetavl"
-    elif aspect_ratio == 1:
+    elif aspect_ratio >= 0.95:
         WhatGameIsIt = "Makvaer"
     else:
         WhatGameIsIt = "Hundefterhare"
@@ -135,8 +159,9 @@ else:
     receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
     print(receivedData)
 
+    print(aspect_ratio)
 
-    # Show the final image with detected pieces and board
-    cv2.imshow("Detected Board Contour", img)
+    # Display the final image with contours and pieces detected
+    cv2.imshow("Playing", img_transparent)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
