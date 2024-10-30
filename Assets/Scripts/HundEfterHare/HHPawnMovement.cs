@@ -36,6 +36,7 @@ public class HHPawnMovement : MonoBehaviour
     private string opponent;
     int whiteLeftToPlace;
     int blackLeftToPlace;
+    GameObject whitePawn;
 
     void Start()
     {
@@ -104,7 +105,7 @@ public class HHPawnMovement : MonoBehaviour
                             if (clicked.Equals(possibleMoves[i][0]))
                             {
                                 PosClass currPosClass = clicked.GetComponent<PosClass>();
-                                locationController.createPawn(whitePawnPrefab, clicked, currPosClass.getListX(), currPosClass.getListY(),currPosClass);
+                                whitePawn = locationController.createPawn(whitePawnPrefab, clicked, currPosClass.getListX(), currPosClass.getListY(),currPosClass);
                                 whiteLeftToPlace -= 1;
                             }
                         }
@@ -172,6 +173,20 @@ public class HHPawnMovement : MonoBehaviour
             case state.SELECT:
 
                 if (whichTurn == blackTag) timerController.timerOn = true; else if (whichTurn == whiteTag) timerController.timerOn = false;
+                if (whichTurn == whiteTag) opponent = blackTag; else if (whichTurn == blackTag) opponent = whiteTag;
+
+                if (whichTurn == whiteTag)
+                {
+                    PawnClass pawnClass = whitePawn.GetComponent<PawnClass>();
+                    if (pawnClass != null)
+                    {
+                        PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
+                        if (posClass != null)
+                        {
+                            if (calculateMoves.calculatePossibleMoves(posClass, selectedPawn, posList, whichTurn, opponent, false).Count == 0) currState = state.BLACK_WON;
+                        }
+                    }
+                }
 
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -187,9 +202,7 @@ public class HHPawnMovement : MonoBehaviour
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
                                 if (posClass != null)
                                 {
-                                    if (whichTurn == whiteTag) opponent = blackTag; else if (whichTurn == blackTag) opponent = whiteTag;
-
-                                    possibleMoves = calculateMoves.calculatePossibleMoves(posClass, selectedPawn, posList, whichTurn, opponent);
+                                    possibleMoves = calculateMoves.calculatePossibleMoves(posClass, selectedPawn, posList, whichTurn, opponent, true);
                                     if (possibleMoves.Count == 0) currState = state.SELECT; else currState = state.MOVE;
                                     if (possibleMoves.Count == 0 && whichTurn == whiteTag) currState = state.BLACK_WON; 
                                 }

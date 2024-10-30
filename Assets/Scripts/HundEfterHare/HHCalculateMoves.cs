@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HHCalculateMoves : MonoBehaviour
 {
-    public List<List<GameObject>> calculatePossibleMoves(PosClass currPos, GameObject selectedPawn, List<List<List<GameObject>>> posList, string teamPawn, string oponentPawn)
+    public List<List<GameObject>> calculatePossibleMoves(PosClass currPos, GameObject selectedPawn, List<List<List<GameObject>>> posList, string teamPawn, string oponentPawn, bool changeColor)
     {
         int currX = currPos.getListX();
         int currY = currPos.getListY();
@@ -45,7 +45,7 @@ public class HHCalculateMoves : MonoBehaviour
                             };
 
                             calculatedMoves.Add(data);
-                            currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                            if (changeColor) currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
                         }
                     }
                 }

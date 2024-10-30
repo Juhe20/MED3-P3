@@ -63,7 +63,7 @@ public class HHLocationController : MonoBehaviour
         posList[i][j][0] = currObj;
     }
 
-    public void createPawn(GameObject prefab, GameObject posObj, int i, int j, PosClass currPosObj)
+    public GameObject createPawn(GameObject prefab, GameObject posObj, int i, int j, PosClass currPosObj)
     {
         if (posObj != null) //just a safe null check
         {
@@ -74,7 +74,9 @@ public class HHLocationController : MonoBehaviour
             pawnClass.setListY(j);
 
             posList[i][j][1] = currObj;
+            return currObj;
         }
+        else return null;
     }
 
     bool CheckOutsideBorder(int x, int y)
