@@ -6,6 +6,7 @@ public class PawnClass : MonoBehaviour
 {
     public int x;
     public int y;
+    public bool isDam = false;
 
     public int getListX()
     {

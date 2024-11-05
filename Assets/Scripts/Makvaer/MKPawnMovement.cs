@@ -27,6 +27,8 @@ public class MKPawnMovement : MonoBehaviour
     private string whichTurn;
     private string opponent;
 
+
+
     void Start()
     {
         StartCoroutine(WaitForLocationController());
@@ -77,7 +79,14 @@ public class MKPawnMovement : MonoBehaviour
                                 {
                                     if (whichTurn == whiteTag) opponent = blackTag; else if (whichTurn == blackTag) opponent = whiteTag;
 
-                                    possibleMoves = calculateMoves.calculatePossibleMoves(posClass, selectedPawn, posList, whichTurn,opponent);
+                                    if (!pawnClass.isDam)
+                                    {
+                                        possibleMoves = calculateMoves.calculatePossibleMoves(posClass, selectedPawn, posList, whichTurn, opponent);
+                                    }
+                                    else
+                                    {
+                                        possibleMoves = calculateMoves.calculatePossibleDamMoves(posClass,selectedPawn, posList, whichTurn, opponent);
+                                    }
                                     if (possibleMoves.Count == 0) currState = state.SELECT; else currState = state.MOVE;
                                 }
                             }
@@ -105,6 +114,7 @@ public class MKPawnMovement : MonoBehaviour
                             //update the data for the posobjects and the pawn object
                             PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
                             PosClass currPosClass = possibleMoves[i][0].GetComponent<PosClass>(); // get the class that hold the info
+
                             if (selectedPawnClass != null && currPosClass != null)
                             {
                                 PosClass originPosClass = posList[selectedPawnClass.getListX()][selectedPawnClass.getListY()][0].GetComponent<PosClass>(); // get the class for the pos object it was standing on
@@ -124,12 +134,34 @@ public class MKPawnMovement : MonoBehaviour
                             }
                             possibleMoves.Clear();
 
+                            if (selectedPawn.CompareTag(whiteTag) && selectedPawnClass.getListX() == 0 && !selectedPawnClass.isDam)
+                            {
+                                selectedPawnClass.isDam = true;
+                                selectedPawn.transform.localScale = selectedPawn.transform.localScale*2;
+                            }
+                            if (selectedPawn.CompareTag(blackTag) && selectedPawnClass.getListX() == 7 && !selectedPawnClass.isDam)
+                            {
+                                selectedPawnClass.isDam = true;
+                                selectedPawn.transform.localScale = selectedPawn.transform.localScale*2;
+                            }
+
                             if (whichTurn == whiteTag) whichTurn = blackTag; else if (whichTurn == blackTag) whichTurn = whiteTag;
                             currState = state.SELECT;
 
                             break;
                         }
                     }
+                }
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    for (int i = 0; i < possibleMoves.Count; i++)
+                    {
+                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+
+                    }
+                    possibleMoves.Clear();
+                    currState = state.SELECT; //set the state to the next
                 }
                 break;
 
