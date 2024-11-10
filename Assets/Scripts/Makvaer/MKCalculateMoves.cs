@@ -173,7 +173,17 @@ public class MKCalculateMoves : MonoBehaviour
     }
     public List<GameObject> calculateDamAttackMoves(GameObject blackPawn, int currX, int currY, int currListX, int currListY, int listIteration, List<List<List<GameObject>>> posList)
     {
-
+        List<List<int>> movesToCheck = new List<List<int>>()
+        {
+            new List<int> {currX-1,currY-1},//up left
+            new List<int> {currX+1,currY-1},//down left
+            new List<int> {currX-1,currY+1},//up right
+            new List<int> {currX+1,currY+1},//down right
+            new List<int> {currX,currY-2},//Left
+            new List<int> {currX+2,currY},//Down
+            new List<int> {currX,currY+2},//right
+            new List<int> {currX-2,currY},//up
+        };
     }
 
 }
