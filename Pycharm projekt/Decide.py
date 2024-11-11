@@ -1,17 +1,54 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 import socket
 import json
 
+
 # Connect to the server
-host, port = "127.0.0.1", 25001
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((host, port))
+#host, port = "127.0.0.1", 25001
+#sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#sock.connect((host, port))
+
+#https://stackoverflow.com/questions/22656698/perspective-correction-in-opencv-using-python
+import cv2
+import matplotlib.pyplot as plt
+
+
+def unwarp(img, src, dst, testing=False):
+    h, w = img.shape[:2]
+    # Calculate the perspective transform matrix M and its inverse
+    M = cv2.getPerspectiveTransform(src, dst)
+    # Warp the image using the transform matrix
+    warped = cv2.warpPerspective(img, M, (w, h), flags=cv2.INTER_LINEAR)
+
+    if testing:
+        # Plot the original and warped images side by side for comparison
+        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
+        f.subplots_adjust(hspace=0.2, wspace=0.05)
+
+        # Show the original image with the source points marked
+        ax1.imshow(img)
+        x = [src[0][0], src[1][0], src[2][0], src[3][0], src[0][0]]
+        y = [src[0][1], src[1][1], src[2][1], src[3][1], src[0][1]]
+        ax1.plot(x, y, color='red', alpha=0.4, linewidth=3, solid_capstyle='round', zorder=2)
+        ax1.set_ylim([h, 0])
+        ax1.set_xlim([0, w])
+        ax1.set_title('Original Image', fontsize=30)
+
+        # Show the warped (unwarped) image
+        ax2.imshow(warped)
+        ax2.set_title('Unwarped Image', fontsize=30)
+        plt.show()
+
+    # Return the warped image and transformation matrix M
+    return warped, M
 
 # Load image
 #img = cv2.imread("Hund_efter_hare/boardplaying.png")
 img = cv2.imread("Makvaer/IMG_0830.jpg")
 #img = cv2.imread("Gaasetavl/Images/Gaasetavl 5.png")
+
 img = cv2.resize(img, (600, 800))
 
 #Grabcut for background removal
@@ -61,14 +98,17 @@ if len(contours) == 0:
 else:
     # Find the largest contour (this should correspond to the board)
     largest_contour = max(contours, key=cv2.contourArea)
-
+    x_coords = largest_contour.reshape(-1, 2)[:, 0]
+    y_coords = largest_contour.reshape(-1, 2)[:, 1]
     # Approximate the contour to simplify the shape
     epsilon = 0.02 * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
-
+    #print(largest_contour)
+    #print(x_coords, y_coords)
     # Calculate the aspect ratio
     x, y, w, h = cv2.boundingRect(largest_contour)
     aspect_ratio = float(w) / h
+
 
     # Calculate solidity (ratio of contour area to convex hull area)
     hull = cv2.convexHull(largest_contour)
@@ -92,9 +132,31 @@ else:
     # 2. Check the bounding box dimensions
     x, y, w, h = cv2.boundingRect(largest_contour)
     print(f"Bounding box dimensions: {w}x{h}")
+    cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
+    print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords) )
+
+
+    #Turning the image
+    #Source positions (corners of the board)
+    src = np.float32([
+        (x,y),
+        (x+w,y),
+        (x+w,y+h),
+        (x,y+h)
+    ])
+
+    #Destanation positions
+    dst = np.float32([
+        (w*aspect_ratio-(x*aspect_ratio), y-(y/aspect_ratio)),  # Top-left.
+        (np.max(x_coords)+(x*aspect_ratio),y-(y**aspect_ratio)),  # Top-right
+        (np.max(x_coords)+(x*aspect_ratio), np.max(y_coords)+(x*aspect_ratio)),  # Bottom-right
+        (x-(x*aspect_ratio), np.max(y_coords))  # Bottom-left
+    ])
+    # Call the unwarp function and unpack the result into img and M
+    img, M = unwarp(img_gray, src, dst, False)
 
     # Hough Circle Transform for piece detection (after detecting the board)
-    detected_circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 0.2, 20, param1=55, param2=30, minRadius=1, maxRadius=30)
+    detected_circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=16, minRadius=30, maxRadius=40)
 
     # Dictionary to store the positions of the pieces
     positiondata = {}
@@ -126,14 +188,12 @@ else:
 
             # Determine if the circle is black or white
             average_color = np.mean(mean_color)  # Calculate average brightness
-            if average_color < 128:  # Threshold for black (can adjust)
+            if average_color < 50:  # Threshold for black (can adjust)
                 black += 1
                 positiondata[f"black{black}"] = [int(a), 0, int(b)]
             else:
                 white += 1
                 positiondata[f"white{white}"] = [int(a), 0, int(b)]
-
-    cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
 
     # Print the results
     print(f"Number of circles detected: {circles}")
@@ -151,17 +211,17 @@ else:
     print(WhatGameIsIt)
 
     # Prepare the data to send
-    positions = json.dumps(positiondata)
+    #positions = json.dumps(positiondata)
 
     # Send the data to the server (assuming the server is expecting this format)
-    sock.sendall(positions.encode("UTF-8"))  # Send position data
-    sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
-    receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
-    print(receivedData)
+    #sock.sendall(positions.encode("UTF-8"))  # Send position data
+    #sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
+    #receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
+    #print(receivedData)
 
     print(aspect_ratio)
 
     # Display the final image with contours and pieces detected
-    cv2.imshow("Playing", img_transparent)
+    cv2.imshow("Playing", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
