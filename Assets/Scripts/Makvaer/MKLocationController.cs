@@ -32,10 +32,7 @@ public class MKLocationController : MonoBehaviour
                 float _currX = i * pawnDis;
                 float _currZ = j * pawnDis * widthFactor;
 
-                if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0))
-                {
-                    createBoardPos(_currX, _currZ, i, j);
-                }
+                createBoardPos(_currX, _currZ, i, j);
             }
         }
     }
@@ -61,11 +58,11 @@ public class MKLocationController : MonoBehaviour
 
         if (i < 3) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
         {
-            createPawn(bPawnPrefab, currObj, i, j, posClass);
+            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(bPawnPrefab, currObj, i, j, posClass);
         }
         else if (i > 4)
         {
-            createPawn(wPawnPrefab, currObj, i, j, posClass);
+            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(wPawnPrefab, currObj, i, j, posClass);
         }
 
         posList[i][j][0] = currObj;

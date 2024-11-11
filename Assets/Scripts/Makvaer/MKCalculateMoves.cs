@@ -110,23 +110,40 @@ public class MKCalculateMoves : MonoBehaviour
         List<List<GameObject>> calculatedMoves = new List<List<GameObject>>();
         int moveOffset = 0;
 
-        for (int i = 0; i < 6; i++)
+        List<List<int>> movesToCheck = new List<List<int>>()
         {
-            moveOffset += 1;
+            new List<int> {currX-moveOffset,currY-moveOffset},//up left
+            new List<int> {currX+moveOffset,currY-moveOffset},//down left
+            new List<int> {currX-moveOffset,currY+moveOffset},//up right
+            new List<int> {currX+moveOffset,currY+moveOffset},//down right
+            new List<int> {currX,currY-moveOffset},//Left
+            new List<int> {currX+moveOffset,currY},//Down
+            new List<int> {currX,currY+moveOffset},//right
+            new List<int> {currX-moveOffset,currY},//up
+        };
 
-            List<List<int>> movesToCheck = new List<List<int>>()
+        for (int j = 0; j < movesToCheck.Count; j++)
+        {
+            moveOffset = 0;
+            GameObject currentKillablePawn = null;
+            int enemysInThisDir = 0;
+            bool ownPawnBlocking = false;
+
+            for (int i = 0; i < 8; i++)
             {
-                new List<int> {currX-moveOffset,currY-moveOffset},//up left
-                new List<int> {currX+moveOffset,currY-moveOffset},//down left
-                new List<int> {currX-moveOffset,currY+moveOffset},//up right
-                new List<int> {currX+moveOffset,currY+moveOffset},//down right
-                new List<int> {currX,currY-moveOffset*2},//Left
-                new List<int> {currX+moveOffset*2,currY},//Down
-                new List<int> {currX,currY+moveOffset*2},//right
-                new List<int> {currX-moveOffset*2,currY},//up
-            };
-            for (int j = 0; j < movesToCheck.Count; j++)
-            {
+                moveOffset += 1;
+                movesToCheck = new List<List<int>>()
+                {
+                    new List<int> {currX-moveOffset,currY-moveOffset},//up left
+                    new List<int> {currX+moveOffset,currY-moveOffset},//down left
+                    new List<int> {currX-moveOffset,currY+moveOffset},//up right
+                    new List<int> {currX+moveOffset,currY+moveOffset},//down right
+                    new List<int> {currX,currY-moveOffset},//Left
+                    new List<int> {currX+moveOffset,currY},//Down
+                    new List<int> {currX,currY+moveOffset},//right
+                    new List<int> {currX-moveOffset,currY},//up
+                };
+
                 int currListX = movesToCheck[j][0];
                 int currListY = movesToCheck[j][1];
 
@@ -138,29 +155,30 @@ public class MKCalculateMoves : MonoBehaviour
                         PosClass posClass = currPosObj.GetComponent<PosClass>();
                         if (posClass != null)
                         {
+                            if (enemysInThisDir >= 2 || ownPawnBlocking)
+                            {
+                                break;
+                            }
                             if (posList[currListX][currListY][1] == null)
                             {
 
                                 List<GameObject> data = new List<GameObject>()
-                            {
-                                currPosObj,
-                                null
-                            };
+                                {
+                                    currPosObj,
+                                    currentKillablePawn
+                                };
 
                                 calculatedMoves.Add(data);
                                 currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
                             }
                             else if (posList[currListX][currListY][1].CompareTag(oponentPawn))
                             {
-                                List<GameObject> data = calculateDamAttackMoves(
-                                    posList[currListX][currListY][1],
-                                    currX,
-                                    currY,
-                                    currListX,
-                                    currListY,
-                                    j,
-                                    posList);
-                                if (data != null) calculatedMoves.Add(data);
+                                enemysInThisDir++;
+                                currentKillablePawn = posList[currListX][currListY][1];
+                            }
+                            else if (posList[currListX][currListY][1].CompareTag(teamPawn))
+                            {
+                                ownPawnBlocking = true;
                             }
                         }
                     }
@@ -171,19 +189,4 @@ public class MKCalculateMoves : MonoBehaviour
 
         return calculatedMoves;
     }
-    public List<GameObject> calculateDamAttackMoves(GameObject blackPawn, int currX, int currY, int currListX, int currListY, int listIteration, List<List<List<GameObject>>> posList)
-    {
-        List<List<int>> movesToCheck = new List<List<int>>()
-        {
-            new List<int> {currX-1,currY-1},//up left
-            new List<int> {currX+1,currY-1},//down left
-            new List<int> {currX-1,currY+1},//up right
-            new List<int> {currX+1,currY+1},//down right
-            new List<int> {currX,currY-2},//Left
-            new List<int> {currX+2,currY},//Down
-            new List<int> {currX,currY+2},//right
-            new List<int> {currX-2,currY},//up
-        };
-    }
-
 }
