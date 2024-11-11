@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -215,6 +215,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 59.48, y: -45, z: 0}
+--- !u!1 &1104998124 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+  m_PrefabInstance: {fileID: 8352839097197613872}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1104998127 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7232767410359103908, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+  m_PrefabInstance: {fileID: 8352839097197613872}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104998124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799903fec1bc9f94681afec556613db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1104998128 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4964930036339606236, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+  m_PrefabInstance: {fileID: 8352839097197613872}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104998124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f473d6ab45d88904885574a6236c1049, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1905005705
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,10 +384,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4964930036339606236, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: board
+      value: 
+      objectReference: {fileID: 1104998124}
     - target: {fileID: 6785932775915202716, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
       propertyPath: m_Name
       value: AllGaasetavl
       objectReference: {fileID: 0}
+    - target: {fileID: 7232767410359103908, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: pawnM
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: cm
+      value: 
+      objectReference: {fileID: 1104998127}
+    - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: locationController
+      value: 
+      objectReference: {fileID: 1104998128}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
