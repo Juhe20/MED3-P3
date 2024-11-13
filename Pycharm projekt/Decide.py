@@ -135,28 +135,33 @@ else:
     cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
     print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords) )
 
+    # All points are in format [cols, rows]
+    pt_A = [x, np.max(y_coords)]
+    pt_B = [np.max(x_coords), np.max(y_coords)]
+    pt_C = [np.max(x_coords), np.min(y_coords)]
+    pt_D = [x, np.min(y_coords)]
 
-    #Turning the image
-    #Source positions (corners of the board)
-    src = np.float32([
-        (x,y),
-        (x+w,y),
-        (x+w,y+h),
-        (x,y+h)
-    ])
+    # Here, I have used L2 norm. You can use L1 also.
+    width_AD = np.sqrt(((pt_A[0] - pt_D[0]) ** 2) + ((pt_A[1] - pt_D[1]) ** 2))
+    width_BC = np.sqrt(((pt_B[0] - pt_C[0]) ** 2) + ((pt_B[1] - pt_C[1]) ** 2))
+    maxWidth = max(int(width_AD), int(width_BC))
 
-    #Destanation positions
-    dst = np.float32([
-        (w*aspect_ratio-(x*aspect_ratio), y-(y/aspect_ratio)),  # Top-left.
-        (np.max(x_coords)+(x*aspect_ratio),y-(y**aspect_ratio)),  # Top-right
-        (np.max(x_coords)+(x*aspect_ratio), np.max(y_coords)+(x*aspect_ratio)),  # Bottom-right
-        (x-(x*aspect_ratio), np.max(y_coords))  # Bottom-left
-    ])
-    # Call the unwarp function and unpack the result into img and M
-    img, M = unwarp(img_gray, src, dst, False)
+    height_AB = np.sqrt(((pt_A[0] - pt_B[0]) ** 2) + ((pt_A[1] - pt_B[1]) ** 2))
+    height_CD = np.sqrt(((pt_C[0] - pt_D[0]) ** 2) + ((pt_C[1] - pt_D[1]) ** 2))
+    maxHeight = max(int(height_AB), int(height_CD))
+
+    input_pts = np.float32([pt_A, pt_B, pt_C, pt_D])
+    output_pts = np.float32([[0, 0],
+                             [0, maxHeight - 1],
+                             [maxWidth - 1, maxHeight - 1],
+                             [maxWidth - 1, 0]])
+    M = cv2.getPerspectiveTransform(input_pts, output_pts)
+
+    out = cv2.warpPerspective(img_gray, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
+    out_col = cv2.warpPerspective(img, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
 
     # Hough Circle Transform for piece detection (after detecting the board)
-    detected_circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=16, minRadius=30, maxRadius=40)
+    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 8, param1=45, param2=21, minRadius=6, maxRadius=15)
 
     # Dictionary to store the positions of the pieces
     positiondata = {}
@@ -175,8 +180,8 @@ else:
             circles += 1
 
             # Draw the circumference of the circle and the center point
-            cv2.circle(img, (a, b), r, (0, 255, 0), 2)
-            cv2.circle(img, (a, b), 1, (0, 0, 255), 3)
+            cv2.circle(out, (a, b), r, (0, 255, 0), 2)
+            cv2.circle(out, (a, b), 1, (0, 0, 255), 3)
 
             # Get the color of the circle (piece)
             mask = np.zeros_like(img_gray)  # Create a mask for the current circle
@@ -188,7 +193,7 @@ else:
 
             # Determine if the circle is black or white
             average_color = np.mean(mean_color)  # Calculate average brightness
-            if average_color < 50:  # Threshold for black (can adjust)
+            if average_color < 122:  # Threshold for black (can adjust)
                 black += 1
                 positiondata[f"black{black}"] = [int(a), 0, int(b)]
             else:
@@ -222,6 +227,6 @@ else:
     print(aspect_ratio)
 
     # Display the final image with contours and pieces detected
-    cv2.imshow("Playing", img)
+    cv2.imshow("test",out)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
