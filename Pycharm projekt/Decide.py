@@ -11,43 +11,9 @@ import json
 #sock.connect((host, port))
 
 #https://stackoverflow.com/questions/22656698/perspective-correction-in-opencv-using-python
-import cv2
-import matplotlib.pyplot as plt
-
-
-def unwarp(img, src, dst, testing=False):
-    h, w = img.shape[:2]
-    # Calculate the perspective transform matrix M and its inverse
-    M = cv2.getPerspectiveTransform(src, dst)
-    # Warp the image using the transform matrix
-    warped = cv2.warpPerspective(img, M, (w, h), flags=cv2.INTER_LINEAR)
-
-    if testing:
-        # Plot the original and warped images side by side for comparison
-        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10))
-        f.subplots_adjust(hspace=0.2, wspace=0.05)
-
-        # Show the original image with the source points marked
-        ax1.imshow(img)
-        x = [src[0][0], src[1][0], src[2][0], src[3][0], src[0][0]]
-        y = [src[0][1], src[1][1], src[2][1], src[3][1], src[0][1]]
-        ax1.plot(x, y, color='red', alpha=0.4, linewidth=3, solid_capstyle='round', zorder=2)
-        ax1.set_ylim([h, 0])
-        ax1.set_xlim([0, w])
-        ax1.set_title('Original Image', fontsize=30)
-
-        # Show the warped (unwarped) image
-        ax2.imshow(warped)
-        ax2.set_title('Unwarped Image', fontsize=30)
-        plt.show()
-
-    # Return the warped image and transformation matrix M
-    return warped, M
 
 # Load image
-#img = cv2.imread("Hund_efter_hare/boardplaying.png")
-img = cv2.imread("Makvaer/IMG_0830.jpg")
-#img = cv2.imread("Gaasetavl/Images/Gaasetavl 5.png")
+img = cv2.imread("Gaasetavl/Images/IMG_0845.jpg")
 
 img = cv2.resize(img, (600, 800))
 
@@ -133,13 +99,13 @@ else:
     x, y, w, h = cv2.boundingRect(largest_contour)
     print(f"Bounding box dimensions: {w}x{h}")
     cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
-    print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords) )
+    print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords))
 
     # All points are in format [cols, rows]
-    pt_A = [x, np.max(y_coords)]
-    pt_B = [np.max(x_coords), np.max(y_coords)]
-    pt_C = [np.max(x_coords), np.min(y_coords)]
-    pt_D = [x, np.min(y_coords)]
+    pt_A = [x,y+h]
+    pt_B = [x+w, y+h]
+    pt_C = [x+w, y]
+    pt_D = [x, y]
 
     # Here, I have used L2 norm. You can use L1 also.
     width_AD = np.sqrt(((pt_A[0] - pt_D[0]) ** 2) + ((pt_A[1] - pt_D[1]) ** 2))
