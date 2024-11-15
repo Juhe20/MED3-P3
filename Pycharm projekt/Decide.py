@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 import socket
 import json
+
 
 # Connect to the server
 #host, port = "127.0.0.1", 25001
@@ -9,7 +11,7 @@ import json
 #sock.connect((host, port))
 
 def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #Method for the standard grid division
-    #I have an optional list that includes the tiles that should be ignored. If ignore_tiles wasn't provided then sets it to an empty list
+    #Optional list that includes the tiles that should be ignored. If ignore_tiles wasn't provided then sets it to an empty list
     if ignore_tiles is None:
         ignore_tiles = []
 
@@ -35,7 +37,7 @@ def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #
             cv2.waitKey(0)
             cv2.destroyAllWindows()
             tile_positions.append((ih, iw))
-            # ------------
+
     detected_circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 0.2, 20, param1=55, param2=40, minRadius=1, maxRadius=30)
     print(detected_circles)
     return tile_positions #returns the list of tile positions (and for now images)
@@ -64,7 +66,6 @@ def divideSpecialImageIntoSections(image, row_lengths,  ignore_tiles=None): #Met
             cv2.waitKey(0)  # Wait for key press to move to the next tile
             cv2.destroyAllWindows()
             tile_positions.append((ih, iw))
-            # -----------------------
     return tile_positions
 
 img1 = cv2.imread("FindingPositions/Makvaer.png")
@@ -115,9 +116,8 @@ for index, (row, col) in enumerate(tile_positions_img3):
 
 
 # Load image
-#img = cv2.imread("Hund_efter_hare/boardplaying.png")
-img = cv2.imread("Makvaer/IMG_0830.jpg")
-#img = cv2.imread("Gaasetavl/Images/Gaasetavl 5.png")
+img = cv2.imread("Gaasetavl/Images/IMG_0845.jpg")
+
 img = cv2.resize(img, (600, 800))
 
 #Grabcut for background removal
@@ -167,14 +167,17 @@ if len(contours) == 0:
 else:
     # Find the largest contour (this should correspond to the board)
     largest_contour = max(contours, key=cv2.contourArea)
-
+    x_coords = largest_contour.reshape(-1, 2)[:, 0]
+    y_coords = largest_contour.reshape(-1, 2)[:, 1]
     # Approximate the contour to simplify the shape
     epsilon = 0.02 * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
-
+    #print(largest_contour)
+    #print(x_coords, y_coords)
     # Calculate the aspect ratio
     x, y, w, h = cv2.boundingRect(largest_contour)
     aspect_ratio = float(w) / h
+
 
     # Calculate solidity (ratio of contour area to convex hull area)
     hull = cv2.convexHull(largest_contour)
@@ -198,9 +201,36 @@ else:
     # 2. Check the bounding box dimensions
     x, y, w, h = cv2.boundingRect(largest_contour)
     print(f"Bounding box dimensions: {w}x{h}")
+    cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
+    print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords))
+
+    # All points are in format [cols, rows]
+    pt_A = [x,y+h]
+    pt_B = [x+w, y+h]
+    pt_C = [x+w, y]
+    pt_D = [x, y]
+
+    # Here, I have used L2 norm. You can use L1 also.
+    width_AD = np.sqrt(((pt_A[0] - pt_D[0]) ** 2) + ((pt_A[1] - pt_D[1]) ** 2))
+    width_BC = np.sqrt(((pt_B[0] - pt_C[0]) ** 2) + ((pt_B[1] - pt_C[1]) ** 2))
+    maxWidth = max(int(width_AD), int(width_BC))
+
+    height_AB = np.sqrt(((pt_A[0] - pt_B[0]) ** 2) + ((pt_A[1] - pt_B[1]) ** 2))
+    height_CD = np.sqrt(((pt_C[0] - pt_D[0]) ** 2) + ((pt_C[1] - pt_D[1]) ** 2))
+    maxHeight = max(int(height_AB), int(height_CD))
+
+    input_pts = np.float32([pt_A, pt_B, pt_C, pt_D])
+    output_pts = np.float32([[0, 0],
+                             [0, maxHeight - 1],
+                             [maxWidth - 1, maxHeight - 1],
+                             [maxWidth - 1, 0]])
+    M = cv2.getPerspectiveTransform(input_pts, output_pts)
+
+    out = cv2.warpPerspective(img_gray, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
+    out_col = cv2.warpPerspective(img, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
 
     # Hough Circle Transform for piece detection (after detecting the board)
-    detected_circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 0.2, 20, param1=55, param2=30, minRadius=1, maxRadius=30)
+    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 8, param1=45, param2=21, minRadius=6, maxRadius=15)
 
     # Dictionary to store the positions of the pieces
     positiondata = {}
@@ -219,8 +249,8 @@ else:
             circles += 1
 
             # Draw the circumference of the circle and the center point
-            cv2.circle(img, (a, b), r, (0, 255, 0), 2)
-            cv2.circle(img, (a, b), 1, (0, 0, 255), 3)
+            cv2.circle(out, (a, b), r, (0, 255, 0), 2)
+            cv2.circle(out, (a, b), 1, (0, 0, 255), 3)
 
             # Get the color of the circle (piece)
             mask = np.zeros_like(img_gray)  # Create a mask for the current circle
@@ -232,14 +262,12 @@ else:
 
             # Determine if the circle is black or white
             average_color = np.mean(mean_color)  # Calculate average brightness
-            if average_color < 128:  # Threshold for black (can adjust)
+            if average_color < 122:  # Threshold for black (can adjust)
                 black += 1
                 positiondata[f"black{black}"] = [int(a), 0, int(b)]
             else:
                 white += 1
                 positiondata[f"white{white}"] = [int(a), 0, int(b)]
-
-    cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
 
     # Print the results
     print(f"Number of circles detected: {circles}")
@@ -268,7 +296,7 @@ else:
     print(aspect_ratio)
 
     # Display the final image with contours and pieces detected
-    cv2.imshow("Playing", img_transparent)
+    cv2.imshow("test",out)
     cv2.waitKey(0)
-    cv2.destroyAllWindows()
 
+    cv2.destroyAllWindows()
