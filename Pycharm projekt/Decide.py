@@ -6,9 +6,9 @@ import json
 
 
 # Connect to the server
-#host, port = "127.0.0.1", 25001
-#sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#sock.connect((host, port))
+host, port = "127.0.0.1", 25001
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((host, port))
 
 def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #Method for the standard grid division
     #Optional list that includes the tiles that should be ignored. If ignore_tiles wasn't provided then sets it to an empty list
@@ -32,8 +32,8 @@ def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #
             tile_positions.append(((ih, iw), tile_img))
 
             # Display the tile
-            cv2.imshow(f"Tile {ih},{iw}", tile_img)
-            print(f"Tile at position {ih},{iw}")
+            #cv2.imshow(f"Tile {ih},{iw}", tile_img)
+            #print(f"Tile at position {ih},{iw}")
             cv2.waitKey(0)
             cv2.destroyAllWindows()
             tile_positions.append((ih, iw))
@@ -45,7 +45,7 @@ def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #
 def divideSpecialImageIntoSections(image, row_lengths,  ignore_tiles=None): #Method for special division with custom number of columns per row
     if ignore_tiles is None:
         ignore_tiles = []
-    height, width, _ = image.shape
+    height, width = image.shape
     tile_height = height // len(row_lengths) #finding the hight of each row based on the number of rows
 
     tile_positions = [] #empty list to store the positions
@@ -61,62 +61,15 @@ def divideSpecialImageIntoSections(image, row_lengths,  ignore_tiles=None): #Met
             tile_positions.append(((ih, iw), tile_img))
 
             # Display the tile
-            cv2.imshow(f"Tile {ih},{iw}", tile_img)
-            print(f"Tile at position {ih},{iw}")
+            #cv2.imshow(f"Tile {ih},{iw}", tile_img)
+            #print(f"Tile at position {ih},{iw}")
             cv2.waitKey(0)  # Wait for key press to move to the next tile
             cv2.destroyAllWindows()
             tile_positions.append((ih, iw))
     return tile_positions
 
-img1 = cv2.imread("FindingPositions/Makvaer.png")
-img_gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-img2 = cv2.imread("FindingPositions/HundEfterHare.png")
-img_gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-img3 = cv2.imread("FindingPositions/Gaasetavl.png")
-img_gray3 = cv2.cvtColor(img3, cv2.COLOR_BGR2GRAY)
-
-h_size_img1, w_size_img1 = 8, 8
-h_size_img2, w_size_img2 = 9, 9
-ignore_tiles_HundEfterHare = [
-    (0, 0), (0, 1), (0, 2), (0, 3), (0, 5), (0, 6), (0, 7), (0, 8),
-    (1, 0), (1, 2), (1, 3), (1, 5), (1, 6), (1, 8),
-    (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8),
-    (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8),
-    (4, 2), (4, 3), (4, 5), (4, 6),
-    (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6), (5, 7), (5, 8),
-    (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7), (6, 8),
-    (7, 0), (7, 2), (7, 3), (7, 5), (7, 6), (7, 8),
-    (8, 0), (8, 1), (8, 2), (8, 3), (8, 5), (8, 6), (8, 7), (8, 8)
-]
-ignore_tiles_Gaasetavl = [
-    (0, 0), (0, 1), (0, 5), (0, 6),
-    (1, 0), (1, 4), (1, 5),
-    (6, 0), (6, 1), (6, 5), (6, 6),
-    (7, 0), (7, 5),
-]
-
-tile_positions_img1 = divideStandardImageIntoSections(img_gray1, h_size_img1, w_size_img1)
-tile_positions_img2 = divideStandardImageIntoSections(img_gray2, h_size_img2, w_size_img2, ignore_tiles_HundEfterHare)
-
-row_lengths_img3 = [7, 6, 7, 6, 7, 6, 7, 6]  #Defining the number of columns for each row
-tile_positions_img3 = divideSpecialImageIntoSections(img_gray3, row_lengths_img3, ignore_tiles_Gaasetavl)
-
-#Printing positions for each image
-print("Positions Makvaer:")
-for index, (row, col) in enumerate(tile_positions_img1):
-    print(f"Tile {index}: Position {row},{col}")
-
-print("\nPositions Hund Efter Hare:")
-for index, (row, col) in enumerate(tile_positions_img2):
-    print(f"Tile {index}: Position {row},{col}")
-
-print("\nPositions Gaasetavl")
-for index, (row, col) in enumerate(tile_positions_img3):
-    print(f"Tile {index}: Position {row},{col}")
-
-
 # Load image
-img = cv2.imread("Gaasetavl/Images/IMG_0845.jpg")
+img = cv2.imread("Makvaer/IMG_0827.jpg")
 
 img = cv2.resize(img, (600, 800))
 
@@ -163,7 +116,7 @@ contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPRO
 
 # Check if any contours were found
 if len(contours) == 0:
-    print("No contours found!")
+    pass
 else:
     # Find the largest contour (this should correspond to the board)
     largest_contour = max(contours, key=cv2.contourArea)
@@ -188,21 +141,21 @@ else:
     # Detect a cross-shaped board by checking both aspect ratio and solidity
     if 0.8 < aspect_ratio < 1.2 and 0.5 < solidity < 0.9 and len(approx) > 8:
         board_shape = "Plus Sign Board"
-        print("Detected a '+' shaped board.")
+        #print("Detected a '+' shaped board.")
     else:
         board_shape = "Unknown Board Shape"
-        print("Board not detected as a '+' shaped board.")
+        #print("Board not detected as a '+' shaped board.")
 
     # Now you can proceed to check other properties of the board or contours:
     # 1. Check the area of the board
     board_area = cv2.contourArea(largest_contour)
-    print(f"Board area: {board_area}")
+    #print(f"Board area: {board_area}")
 
     # 2. Check the bounding box dimensions
     x, y, w, h = cv2.boundingRect(largest_contour)
-    print(f"Bounding box dimensions: {w}x{h}")
+    #print(f"Bounding box dimensions: {w}x{h}")
     cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
-    print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords))
+    #print(x, y, w, h, np.max(x_coords), np.min(x_coords),np.max(y_coords),np.min(y_coords))
 
     # All points are in format [cols, rows]
     pt_A = [x,y+h]
@@ -277,21 +230,58 @@ else:
 
     if solidity < 0.9:
         WhatGameIsIt = "Gaasetavl"
+        ignore_tiles_Gaasetavl = [
+            (0, 0), (0, 1), (0, 5), (0, 6),
+            (1, 0), (1, 4), (1, 5),
+            (6, 0), (6, 1), (6, 5), (6, 6),
+            (7, 0), (7, 5),
+        ]
+        row_lengths_img3 = [7, 6, 7, 6, 7, 6, 7, 6]  # Defining the number of columns for each row
+        tile_positions_img3 = divideSpecialImageIntoSections(out, row_lengths_img3, ignore_tiles_Gaasetavl)
+        #print("\nPositions Gaasetavl")
+        for index, (row, col) in enumerate(tile_positions_img3):
+            #print(f"Tile {index}: Position {row},{col}")
+            pass
+
     elif aspect_ratio >= 0.95:
         WhatGameIsIt = "Makvaer"
+        h_size_img1, w_size_img1 = 8, 8
+        tile_positions_img1 = divideStandardImageIntoSections(out, h_size_img1, w_size_img1)
+        # Printing positions for each image
+        print("\nPositions Makvaer:")
+        for index, (row, col) in enumerate(tile_positions_img1):
+            print(f"Tile {index}: Position {row},{col}")
     else:
         WhatGameIsIt = "Hundefterhare"
+        h_size_img2, w_size_img2 = 9, 9
+        ignore_tiles_HundEfterHare = [
+            (0, 0), (0, 1), (0, 2), (0, 3), (0, 5), (0, 6), (0, 7), (0, 8),
+            (1, 0), (1, 2), (1, 3), (1, 5), (1, 6), (1, 8),
+            (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8),
+            (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8),
+            (4, 2), (4, 3), (4, 5), (4, 6),
+            (5, 0), (5, 1), (5, 2), (5, 3), (5, 4), (5, 5), (5, 6), (5, 7), (5, 8),
+            (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 7), (6, 8),
+            (7, 0), (7, 2), (7, 3), (7, 5), (7, 6), (7, 8),
+            (8, 0), (8, 1), (8, 2), (8, 3), (8, 5), (8, 6), (8, 7), (8, 8)
+        ]
+        tile_positions_img2 = divideStandardImageIntoSections(out, h_size_img2, w_size_img2,
+                                                              ignore_tiles_HundEfterHare)
+        #print("\nPositions Hund Efter Hare:")
+        for index, (row, col) in enumerate(tile_positions_img2):
+            #print(f"Tile {index}: Position {row},{col}")
+            pass
 
     print(WhatGameIsIt)
 
     # Prepare the data to send
-    #positions = json.dumps(positiondata)
+    positions = json.dumps(positiondata)
 
     # Send the data to the server (assuming the server is expecting this format)
-    #sock.sendall(positions.encode("UTF-8"))  # Send position data
-    #sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
-    #receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
-    #print(receivedData)
+    sock.sendall(positions.encode("UTF-8"))  # Send position data
+    sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
+    receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
+    print(receivedData)
 
     print(aspect_ratio)
 

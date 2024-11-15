@@ -28,6 +28,8 @@ public class PythonReceiver : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(blackPositions);
+        Debug.Log(whitePosition);
         //Focuses the camera in the middle of the playfield
         camera.transform.position = new Vector3(playField.transform.position.x, 300f, playField.transform.position.z);
         camera.transform.LookAt(playField.transform.position);
