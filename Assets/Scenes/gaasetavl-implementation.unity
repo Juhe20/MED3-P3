@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -384,10 +384,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3402787249595800368, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 323
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402787249595800368, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 164.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4964930036339606236, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
       propertyPath: board
       value: 
       objectReference: {fileID: 1104998124}
+    - target: {fileID: 6722124258189648807, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: m_margin.w
+      value: -37.938934
+      objectReference: {fileID: 0}
+    - target: {fileID: 6722124258189648807, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: m_margin.z
+      value: 84.164734
+      objectReference: {fileID: 0}
     - target: {fileID: 6785932775915202716, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
       propertyPath: m_Name
       value: AllGaasetavl

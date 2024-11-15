@@ -66,9 +66,6 @@ public class PawnMovement : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    //Start the timer if it hasn't been started
-                    if (timerController.timerOn == false) timerController.timerOn = true;
-
                     GameObject clicked = clickObject();
                     selectedPawn = clicked;
                     if (selectedPawn != null)
@@ -160,6 +157,8 @@ public class PawnMovement : MonoBehaviour
 
             //black states
             case (state.BLACK_SELECT):
+                //Start the timer if it hasn't been started
+                if (timerController.timerOn == false) timerController.timerOn = true;
                 if (Input.GetMouseButtonDown(0))
                 {
                     GameObject clicked = clickObject();
