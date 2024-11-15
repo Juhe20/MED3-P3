@@ -6,9 +6,9 @@ import json
 
 
 # Connect to the server
-host, port = "127.0.0.1", 25001
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((host, port))
+#host, port = "127.0.0.1", 25001
+#sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#sock.connect((host, port))
 
 def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #Method for the standard grid division
     #Optional list that includes the tiles that should be ignored. If ignore_tiles wasn't provided then sets it to an empty list
@@ -69,7 +69,7 @@ def divideSpecialImageIntoSections(image, row_lengths,  ignore_tiles=None): #Met
     return tile_positions
 
 # Load image
-img = cv2.imread("Makvaer/IMG_0827.jpg")
+img = cv2.imread("Makvaer/IMG_0831.jpg")
 
 img = cv2.resize(img, (600, 800))
 
@@ -173,10 +173,10 @@ else:
     maxHeight = max(int(height_AB), int(height_CD))
 
     input_pts = np.float32([pt_A, pt_B, pt_C, pt_D])
-    output_pts = np.float32([[0, 0],
-                             [0, maxHeight - 1],
-                             [maxWidth - 1, maxHeight - 1],
-                             [maxWidth - 1, 0]])
+    output_pts = np.float32([[0, maxHeight],
+                             [maxWidth , maxHeight],
+                             [maxWidth, 0],
+                             [0 , 0]])
     M = cv2.getPerspectiveTransform(input_pts, output_pts)
 
     out = cv2.warpPerspective(img_gray, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
@@ -275,13 +275,13 @@ else:
     print(WhatGameIsIt)
 
     # Prepare the data to send
-    positions = json.dumps(positiondata)
+    #positions = json.dumps(positiondata)
 
     # Send the data to the server (assuming the server is expecting this format)
-    sock.sendall(positions.encode("UTF-8"))  # Send position data
-    sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
-    receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
-    print(receivedData)
+    #sock.sendall(positions.encode("UTF-8"))  # Send position data
+    #sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
+    #receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
+    #print(receivedData)
 
     print(aspect_ratio)
 
