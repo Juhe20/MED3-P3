@@ -65,6 +65,7 @@ public class MKPawnMovement : MonoBehaviour
             case state.SELECT:
                 if (Input.GetMouseButtonDown(0))
                 {
+                    if (text.text != "") text.text = "";
                     GameObject clicked = clickObject();
                     selectedPawn = clicked;
                     if (selectedPawn != null)
@@ -137,12 +138,12 @@ public class MKPawnMovement : MonoBehaviour
                             if (selectedPawn.CompareTag(whiteTag) && selectedPawnClass.getListX() == 0 && !selectedPawnClass.isDam)
                             {
                                 selectedPawnClass.isDam = true;
-                                selectedPawn.transform.localScale = selectedPawn.transform.localScale*2;
+                                selectedPawn.transform.localScale = selectedPawn.transform.localScale*2; //dette skal ændres til at skifte farve på frøen når de kommer ind
                             }
                             if (selectedPawn.CompareTag(blackTag) && selectedPawnClass.getListX() == 7 && !selectedPawnClass.isDam)
                             {
                                 selectedPawnClass.isDam = true;
-                                selectedPawn.transform.localScale = selectedPawn.transform.localScale*2;
+                                selectedPawn.transform.localScale = selectedPawn.transform.localScale*2; //dette skal ændres til at skifte farve på frøen når de kommer ind
                             }
 
                             if (whichTurn == whiteTag) whichTurn = blackTag; else if (whichTurn == blackTag) whichTurn = whiteTag;
