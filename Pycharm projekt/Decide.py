@@ -6,9 +6,9 @@ import json
 
 
 # Connect to the server
-#host, port = "127.0.0.1", 25001
-#sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#sock.connect((host, port))
+host, port = "127.0.0.1", 25001
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((host, port))
 
 def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None): #Method for the standard grid division
     #Optional list that includes the tiles that should be ignored. If ignore_tiles wasn't provided then sets it to an empty list
@@ -69,7 +69,7 @@ def divideSpecialImageIntoSections(image, row_lengths,  ignore_tiles=None): #Met
     return tile_positions
 
 # Load image
-img = cv2.imread("Makvaer/IMG_0831.jpg")
+img = cv2.imread("Makvaer/IMG_0827.jpg")
 
 img = cv2.resize(img, (600, 800))
 
@@ -183,7 +183,7 @@ else:
     out_col = cv2.warpPerspective(img, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
 
     # Hough Circle Transform for piece detection (after detecting the board)
-    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 8, param1=45, param2=21, minRadius=6, maxRadius=15)
+    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=20.9, minRadius=12, maxRadius=20)
 
     # Dictionary to store the positions of the pieces
     positiondata = {}
@@ -193,7 +193,6 @@ else:
     black = 0
     circles = 0
 
-    # If circles (pieces) are detected
     if detected_circles is not None:
         detected_circles = np.uint16(np.around(detected_circles))
 
@@ -205,22 +204,33 @@ else:
             cv2.circle(out, (a, b), r, (0, 255, 0), 2)
             cv2.circle(out, (a, b), 1, (0, 0, 255), 3)
 
-            # Get the color of the circle (piece)
-            mask = np.zeros_like(img_gray)  # Create a mask for the current circle
-            cv2.circle(mask, (a, b), r, 255, -1)  # Fill the circle in the mask
+            # Convert image to HSV color space
+            img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-            # Extract the colors from the masked area
-            masked_img = cv2.bitwise_and(img, img, mask=mask)
-            mean_color = cv2.mean(masked_img, mask=mask)[:3]  # Get the mean color
+            # Extract the H, S, V channels
+            H, S, V = cv2.split(img_HSV)
 
-            # Determine if the circle is black or white
-            average_color = np.mean(mean_color)  # Calculate average brightness
-            if average_color < 122:  # Threshold for black (can adjust)
+            # Define the region of interest (ROI) centered around the detected circle
+            # Here, we use a smaller square around the center. You can adjust the size.
+            roi_size = 4  # This defines the size of the region around the center (5x5 pixels)
+            x1, y1 = max(0, a - roi_size), max(0, b - roi_size)
+            x2, y2 = min(V.shape[1], a + roi_size), min(V.shape[0], b + roi_size)
+
+            # Extract the region of interest (ROI) from the V channel (brightness)
+            roi = V[y1:y2, x1:x2]
+
+            # Compute the mean of the V channel (brightness) in the ROI
+            mean_brightness = np.mean(roi)  # Average brightness of the center region
+
+            # Set a threshold for black vs white pieces based on the mean brightness
+            if mean_brightness < 183:  # Threshold for dark pieces (black)
                 black += 1
+                print(f"Black piece (brightness): {mean_brightness}")
                 positiondata[f"black{black}"] = [int(a), 0, int(b)]
-            else:
+            else:  # Light pieces (white)
                 white += 1
                 positiondata[f"white{white}"] = [int(a), 0, int(b)]
+                print(f"White piece (brightness): {mean_brightness}")
 
     # Print the results
     print(f"Number of circles detected: {circles}")
@@ -275,13 +285,13 @@ else:
     print(WhatGameIsIt)
 
     # Prepare the data to send
-    #positions = json.dumps(positiondata)
+    positions = json.dumps(positiondata)
 
     # Send the data to the server (assuming the server is expecting this format)
-    #sock.sendall(positions.encode("UTF-8"))  # Send position data
-    #sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
-    #receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
-    #print(receivedData)
+    sock.sendall(positions.encode("UTF-8"))  # Send position data
+    sock.sendall(board_shape.encode("UTF-8"))  # Send the board shape type
+    receivedData = sock.recv(1024).decode("UTF-8")  # Receiving data from the server
+    print(receivedData)
 
     print(aspect_ratio)
 
