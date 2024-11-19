@@ -4,12 +4,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
 public class PythonReceiver : MonoBehaviour
 {
+    public static PythonReceiver Instance;
     Thread mThread;
     public string connectionIP = "127.0.0.1";
     public int connectionPort = 25001;
@@ -21,47 +23,54 @@ public class PythonReceiver : MonoBehaviour
     List<Vector3> blackPositions = new List<Vector3>();
     List<Vector3> whitePosition = new List<Vector3>();
     bool running;
-    public Camera camera;
-    public GameObject playField;
     private string gameChanger;
 
+    private void Awake()
+    {
+        // Singleton pattern to ensure only one instance exists
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);  // Makes this object persist across scene changes
+        }
+        else
+        {
+            Destroy(gameObject);  // Destroys any duplicate instances
+        }
+    }
 
     private void Update()
     {
-        Debug.Log(blackPositions);
-        Debug.Log(whitePosition);
-        //Focuses the camera in the middle of the playfield
-        camera.transform.position = new Vector3(playField.transform.position.x, 300f, playField.transform.position.z);
-        camera.transform.LookAt(playField.transform.position);
-
-        //Checks if the string has been changed to a game name and loads the scene for that game
-        //if(gameChanger != null)
-        //{
-        //    SceneManager.LoadScene(gameChanger);
-        //}
-
-        //2 checks to see if the Python script send any positions for either black or white pieces.
-        if (blackPositions.Count >= 0)
+        // Check if the string has been changed to a game name and loads the scene for that game
+        if (gameChanger != null)
         {
-            //Loops through all the positions and instantiates a prefab on the position it's iterating over
+            SceneManager.LoadScene(gameChanger);
+            gameChanger = null;  // Clear the gameChanger after switching scenes
+        }
+
+        // Check and instantiate black pieces
+        if (blackPositions.Count > 0)
+        {
             foreach (var black in blackPositions)
             {
-                int i = 0;
-                Instantiate(blackPrefab, blackPositions[i], Quaternion.identity);
-                //Remove the position from the list so we don't accidently get multiple of the same position
-                blackPositions.Remove(blackPositions[i]);
+                GameObject spawnedBlack = Instantiate(blackPrefab, black, Quaternion.identity);
+                DontDestroyOnLoad(spawnedBlack);  // Make sure the spawned black piece persists
             }
+            blackPositions.Clear();  // Clear the list after instantiation to avoid duplicates
         }
-        if (whitePosition.Count >= 0)
+
+        // Check and instantiate white pieces
+        if (whitePosition.Count > 0)
         {
             foreach (var white in whitePosition)
             {
-                int i = 0;
-                Instantiate(whitePrefab, whitePosition[i], Quaternion.identity);
-                whitePosition.Remove(whitePosition[i]);
+                GameObject spawnedWhite = Instantiate(whitePrefab, white, Quaternion.identity);
+                DontDestroyOnLoad(spawnedWhite);  // Make sure the spawned white piece persists
             }
+            whitePosition.Clear();  // Clear the list after instantiation to avoid duplicates
         }
     }
+
 
     private void Start()
     {

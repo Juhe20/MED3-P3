@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 import socket
 import json
 
@@ -9,56 +8,55 @@ host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None):  # Method for standard grid division
-    if ignore_tiles is None:
-        ignore_tiles = []
+# def divideStandardImageIntoSections(image, h_size, w_size, ignore_tiles=None):  # Method for standard grid division
+#     if ignore_tiles is None:
+#         ignore_tiles = []
+#
+#     height, width = image.shape
+#     tile_height = height // h_size
+#     tile_width = width // w_size
+#
+#     tile_positions = []  # Empty list to store the positions (& images for each tile)
+#     for ih in range(h_size):
+#         for iw in range(w_size):
+#             if (ih, iw) in ignore_tiles:
+#                 continue
+#             x = iw * tile_width
+#             y = ih * tile_height
+#             tile_img = image[y:y + tile_height, x:x + tile_width]
+#             tile_positions.append(((ih, iw), tile_img))
+#
+#             cv2.waitKey(0)
+#             cv2.destroyAllWindows()
+#             tile_positions.append((ih, iw))
+#
+#     detected_circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 0.2, 20, param1=55, param2=40, minRadius=1,
+#                                         maxRadius=30)
+#     print(detected_circles)
+#     return tile_positions  # Returns list of tile positions (and for now images)
+#
+#
+# def divideSpecialImageIntoSections(image, row_lengths, ignore_tiles=None):  # Custom column per row division
+#     if ignore_tiles is None:
+#         ignore_tiles = []
+#     height, width = image.shape
+#     tile_height = height // len(row_lengths)
+#
+#     tile_positions = []
+#     for ih, row_length in enumerate(row_lengths):
+#         tile_width = width // row_length
+#         for iw in range(row_length):
+#             if (ih, iw) in ignore_tiles:
+#                 continue
+#             x = iw * tile_width + 10
+#             y = ih * tile_height + 10
+#             tile_img = image[y:y + tile_height, x:x + tile_width]
+#             tile_positions.append(((ih, iw), tile_img))
+#     return tile_positions
 
-    height, width = image.shape
-    tile_height = height // h_size
-    tile_width = width // w_size
-
-    tile_positions = []  # Empty list to store the positions (& images for each tile)
-    for ih in range(h_size):
-        for iw in range(w_size):
-            if (ih, iw) in ignore_tiles:
-                continue
-            x = iw * tile_width
-            y = ih * tile_height
-            tile_img = image[y:y + tile_height, x:x + tile_width]
-            tile_positions.append(((ih, iw), tile_img))
-
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            tile_positions.append((ih, iw))
-
-    detected_circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 0.2, 20, param1=55, param2=40, minRadius=1, maxRadius=30)
-    print(detected_circles)
-    return tile_positions  # Returns list of tile positions (and for now images)
-
-def divideSpecialImageIntoSections(image, row_lengths, ignore_tiles=None):  # Custom column per row division
-    if ignore_tiles is None:
-        ignore_tiles = []
-    height, width = image.shape
-    tile_height = height // len(row_lengths)
-
-    tile_positions = []
-    for ih, row_length in enumerate(row_lengths):
-        tile_width = width // row_length
-        for iw in range(row_length):
-            if (ih, iw) in ignore_tiles:
-                continue
-            x = iw * tile_width + 10
-            y = ih * tile_height + 10
-            tile_img = image[y:y + tile_height, x:x + tile_width]
-            tile_positions.append(((ih, iw), tile_img))
-
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            tile_positions.append((ih, iw))
-    return tile_positions
 
 # Load image
-img = cv2.imread("Makvaer/20241118_113813.jpg")
+img = cv2.imread("Makvaer/IMG_0827.jpg")
 img = cv2.resize(img, (600, 800))
 
 # Grabcut for background removal
@@ -97,11 +95,6 @@ if len(contours) > 0:
     contour_area = cv2.contourArea(largest_contour)
     solidity = contour_area / hull_area
 
-    if 0.8 < aspect_ratio < 1.2 and 0.5 < solidity < 0.9 and len(approx) > 8:
-        board_shape = "Plus Sign Board"
-    else:
-        board_shape = "Unknown Board Shape"
-
     board_area = cv2.contourArea(largest_contour)
     cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
 
@@ -123,17 +116,19 @@ if len(contours) > 0:
     out = cv2.warpPerspective(img_gray, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
     out_col = cv2.warpPerspective(img, M, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
 
-
     # Hough Circle Transform for piece detection (after detecting the board)
     # Hough Circle Transform for piece detection
-    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=20.9, minRadius=12, maxRadius=20)
+    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=20.9, minRadius=12,
+                                        maxRadius=20)
 
     positiondata = {}
     white = 0
     black = 0
     circles = 0
-    h_size, w_size = 8, 8  # Assuming 8x8 grid for Makvaer
-    tile_height, tile_width = out.shape[0] // h_size, out.shape[1] // w_size
+    grid_size = 8
+    grid = np.zeros((grid_size, grid_size))
+    tile_width = maxWidth // grid_size
+    tile_height = maxHeight // grid_size
 
     if detected_circles is not None:
         detected_circles = np.uint16(np.around(detected_circles))
@@ -143,35 +138,35 @@ if len(contours) > 0:
             col = a // tile_width
             row = b // tile_height
 
+            # Check if the cell is already occupied
+            if grid[row, col] == 0:
+                # The cell is empty, so assign the piece to this cell
+                grid[row, col] = 1  # Mark this cell as occupied
+
             cv2.circle(out, (a, b), r, (0, 255, 0), 2)
             cv2.circle(out, (a, b), 1, (0, 0, 255), 3)
-            img_HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            H, S, V = cv2.split(img_HSV)
+            img_LAB = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+            L, A, B = cv2.split(img_LAB)
             roi_size = 4
             x1, y1 = max(0, a - roi_size), max(0, b - roi_size)
-            x2, y2 = min(V.shape[1], a + roi_size), min(V.shape[0], b + roi_size)
-            roi = V[y1:y2, x1:x2]
-            mean_brightness = np.mean(roi)
-
-            if mean_brightness < 183:
+            x2, y2 = min(B.shape[1], a + roi_size), min(B.shape[0], b + roi_size)
+            roi = B[y1:y2, x1:x2]
+            mean_B = np.mean(roi)
+            #Check mean value of B in LAB
+            if mean_B > 131:
                 black += 1
                 positiondata[f"black{black}"] = [int(col), 0, int(row)]
             else:
                 white += 1
                 positiondata[f"white{white}"] = [int(col), 0, int(row)]
 
+    #Check solidity and aspect ratio to find the game
     if solidity < 0.9:
         WhatGameIsIt = "Gaasetavl"
-        ignore_tiles_Gaasetavl = [
-            (0, 0), (0, 1), (0, 5), (0, 6),
-            (1, 0), (1, 4), (1, 5),
-            (6, 0), (6, 1), (6, 5), (6, 6),
-            (5, 0), (5, 4), (5, 5)
-        ]
-        positions = divideStandardImageIntoSections(out, 7, 7, ignore_tiles_Gaasetavl)
-    else:
+    elif solidity < 0.9 < aspect_ratio:
         WhatGameIsIt = "Makvaer"
-        positions = divideStandardImageIntoSections(out, 8, 8)
+    else:
+        WhatGameIsIt = "HundEfterHare"
 
     print(f"Number of circles detected: {circles}")
     print(f"Position data: {positiondata}")
@@ -185,7 +180,7 @@ if len(contours) > 0:
     receivedData = sock.recv(1024).decode("UTF-8")
     print(receivedData)
 
-    # Display final result
+    # Display image
     cv2.imshow("Detected Board", out)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
