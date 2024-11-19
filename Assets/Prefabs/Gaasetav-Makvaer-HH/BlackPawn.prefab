@@ -121,5 +121,3 @@ MonoBehaviour:
   x: 0
   y: 0
   isDam: 0
-  animate: 0
-  animator: {fileID: 0}

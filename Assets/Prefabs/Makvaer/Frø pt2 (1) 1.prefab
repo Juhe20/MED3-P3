@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "Fr\xF8 pt2 (1) 1"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 61f33b785ece1a345956779fee15308b, type: 3}
+      propertyPath: m_TagString
+      value: whitePawn
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -102,8 +106,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 4.6188455, y: 3.548844, z: 3.1730738}
+  m_Center: {x: 0.2902944, y: 0.7507893, z: 0.049491823}
 --- !u!23 &579352759713052806
 MeshRenderer:
   m_ObjectHideFlags: 0
