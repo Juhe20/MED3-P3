@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6e8e8b7436cea4eb1ef90cb31b08af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posPrefab: {fileID: 86724581955808581, guid: a6781158a143c4c43a34d53be667c425, type: 3}
+  posPrefab: {fileID: 1703017872967070629, guid: e1a3de5d8c445614b9574533b7b3cdbe, type: 3}
   board: {fileID: 1162980140}
   bPawnPrefab: {fileID: 1050987475072929572, guid: 1abcf35bc565f25478c4c5b1a458e1ef, type: 3}
   wPawnPrefab: {fileID: 4800456684229854070, guid: e84fa9b63ade8ea458340a5558b58638, type: 3}
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f95713fe610c74890a288ee82d617a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ogPosMatirial: {fileID: 2100000, guid: 1a85d1f2bc46c78498b56ea22cd4728e, type: 2}
+  ogPosMatirial: {fileID: -6478536213147159724, guid: e4fdcea0ea65b08448b246d4562a29dd, type: 3}
   locationController: {fileID: 1162980142}
   calculateMoves: {fileID: 1162980147}
   text: {fileID: 1373860433}
@@ -640,7 +640,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 701938295385228804, guid: cecdea08f1710294b8aa5025631deb13, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: -0.6
       objectReference: {fileID: 0}
     - target: {fileID: 701938295385228804, guid: cecdea08f1710294b8aa5025631deb13, type: 3}
       propertyPath: m_LocalPosition.z
