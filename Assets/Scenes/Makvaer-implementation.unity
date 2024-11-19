@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -213,10 +213,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6e8e8b7436cea4eb1ef90cb31b08af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posPrefab: {fileID: 4113250230559646106, guid: 1b8aac975f6490f48bce4b704be8c671, type: 3}
+  posPrefab: {fileID: 86724581955808581, guid: a6781158a143c4c43a34d53be667c425, type: 3}
   board: {fileID: 1162980140}
-  bPawnPrefab: {fileID: 4543877304329013654, guid: 1fefb56a0d492e64dbefeee99aac69a9, type: 3}
-  wPawnPrefab: {fileID: 8884489395392381346, guid: 22cc6b00d5ffce04684c1577fae3975f, type: 3}
+  bPawnPrefab: {fileID: 1050987475072929572, guid: 1abcf35bc565f25478c4c5b1a458e1ef, type: 3}
+  wPawnPrefab: {fileID: 4800456684229854070, guid: e84fa9b63ade8ea458340a5558b58638, type: 3}
 --- !u!114 &1162980147
 MonoBehaviour:
   m_ObjectHideFlags: 0
