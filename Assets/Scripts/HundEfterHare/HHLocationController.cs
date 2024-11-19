@@ -63,11 +63,11 @@ public class HHLocationController : MonoBehaviour
         posList[i][j][0] = currObj;
     }
 
-    public GameObject createPawn(GameObject prefab, GameObject posObj, int i, int j, PosClass currPosObj)
+    public GameObject createPawn(GameObject prefab, GameObject posObj, int i, int j, PosClass currPosObj, float yOfsset)
     {
         if (posObj != null) //just a safe null check
         {
-            GameObject currObj = Instantiate(prefab, new Vector3(posObj.transform.position.x, posObj.transform.position.y + 0.5f, posObj.transform.position.z), Quaternion.Euler(0, 0, 0));
+            GameObject currObj = Instantiate(prefab, new Vector3(posObj.transform.position.x, posObj.transform.position.y + yOfsset, posObj.transform.position.z), Quaternion.Euler(0, 0, 0));
             currObj.transform.SetParent(board.transform);
             PawnClass pawnClass = currObj.GetComponent<PawnClass>();
             pawnClass.setListX(i);

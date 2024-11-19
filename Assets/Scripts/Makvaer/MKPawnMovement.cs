@@ -8,6 +8,7 @@ public class MKPawnMovement : MonoBehaviour
     [SerializeField] Material ogPosMatirial;
     [SerializeField] MKLocationController locationController;
     [SerializeField] MKCalculateMoves calculateMoves;
+    [SerializeField] PawnMoveController pawnMoveController;
     [SerializeField] TextMeshProUGUI text;
 
     public enum state
@@ -15,7 +16,8 @@ public class MKPawnMovement : MonoBehaviour
         SELECT,
         MOVE,
         WHITE_WON,
-        BLACK_WON
+        BLACK_WON,
+        MOVING
     }
     public state currState = state.SELECT;
     List<List<List<GameObject>>> posList;
@@ -26,6 +28,10 @@ public class MKPawnMovement : MonoBehaviour
     private string blackTag;
     private string whichTurn;
     private string opponent;
+
+    [SerializeField] float whiteYOfsset;
+    [SerializeField] float blackYOfsset;
+    float currYOfsset;
 
 
 
@@ -78,8 +84,15 @@ public class MKPawnMovement : MonoBehaviour
                                 PosClass posClass = posList[pawnClass.getListX()][pawnClass.getListY()][0].GetComponent<PosClass>();
                                 if (posClass != null)
                                 {
-                                    if (whichTurn == whiteTag) opponent = blackTag; else if (whichTurn == blackTag) opponent = whiteTag;
-
+                                    if (whichTurn == whiteTag)
+                                    {
+                                        opponent = blackTag; currYOfsset = whiteYOfsset;
+                                    }
+                                    else if (whichTurn == blackTag)
+                                    {
+                                        opponent = whiteTag; currYOfsset = blackYOfsset;
+                                    }
+                                    
                                     if (!pawnClass.isDam)
                                     {
                                         possibleMoves = calculateMoves.calculatePossibleMoves(posClass, selectedPawn, posList, whichTurn, opponent);
@@ -164,6 +177,10 @@ public class MKPawnMovement : MonoBehaviour
                     possibleMoves.Clear();
                     currState = state.SELECT; //set the state to the next
                 }
+                break;
+
+            case state.MOVING:
+
                 break;
 
             case state.WHITE_WON:

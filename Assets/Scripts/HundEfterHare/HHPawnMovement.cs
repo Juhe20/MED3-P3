@@ -15,6 +15,7 @@ public class HHPawnMovement : MonoBehaviour
     [SerializeField] GameObject whitePawnPrefab;
     [SerializeField] TimerController timerController;
     [SerializeField] float timerTime;
+    [SerializeField] PawnMoveController pawnMoveController;
 
     public enum state
     {
@@ -37,6 +38,10 @@ public class HHPawnMovement : MonoBehaviour
     int whiteLeftToPlace;
     int blackLeftToPlace;
     GameObject whitePawn;
+
+    [SerializeField] float whiteYOfsset;
+    [SerializeField] float blackYOfsset;
+    float currYOfsset;
 
     void Start()
     {
@@ -105,7 +110,9 @@ public class HHPawnMovement : MonoBehaviour
                             if (clicked.Equals(possibleMoves[i][0]))
                             {
                                 PosClass currPosClass = clicked.GetComponent<PosClass>();
-                                whitePawn = locationController.createPawn(whitePawnPrefab, clicked, currPosClass.getListX(), currPosClass.getListY(),currPosClass);
+                                whitePawn = locationController.createPawn(whitePawnPrefab, clicked, currPosClass.getListX(), currPosClass.getListY(),currPosClass, whiteYOfsset);
+                                clicked.GetComponent<MeshRenderer>().material = ogPosMatirial;
+                                possibleMoves.RemoveAt(i);
                                 whiteLeftToPlace -= 1;
                             }
                         }
@@ -113,12 +120,6 @@ public class HHPawnMovement : MonoBehaviour
                 }
                 else
                 {
-                    for (int j = 0; j < possibleMoves.Count; j++)
-                    {
-                        possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
-
-                    }
-                    possibleMoves.Clear();
                     currState = state.BLACK_PLACE;
                 }
                 break;
@@ -128,20 +129,6 @@ public class HHPawnMovement : MonoBehaviour
 
                 if (blackLeftToPlace != 0)
                 {
-                    if (possibleMoves.Count == 0) 
-                    {
-                        for (int i = 0; i < posList.Count; i++)
-                        {
-                            for (int j = 0; j < posList[i].Count; j++)
-                            {
-                                if (posList[i][j][0] != null)
-                                {
-                                    possibleMoves.Add(new List<GameObject>() { posList[i][j][0], null });
-                                    posList[i][j][0].GetComponent<MeshRenderer>().material.color = Color.red;
-                                }
-                            }
-                        }
-                    }
                     if (Input.GetMouseButtonDown(0))
                     {
                         GameObject clicked = clickObject();
@@ -151,8 +138,10 @@ public class HHPawnMovement : MonoBehaviour
                             if (clicked.Equals(possibleMoves[i][0]))
                             {
                                 PosClass currPosClass = clicked.GetComponent<PosClass>();
-                                locationController.createPawn(blackPawnPrefab, clicked, currPosClass.getListX(), currPosClass.getListY(), currPosClass);
+                                locationController.createPawn(blackPawnPrefab, clicked, currPosClass.getListX(), currPosClass.getListY(), currPosClass,blackYOfsset);
                                 blackLeftToPlace -= 1;
+                                clicked.GetComponent<MeshRenderer>().material = ogPosMatirial;
+                                possibleMoves.RemoveAt(i);
                             }
                         }
                     }
@@ -173,7 +162,16 @@ public class HHPawnMovement : MonoBehaviour
             case state.SELECT:
 
                 if (whichTurn == blackTag) timerController.timerOn = true; else if (whichTurn == whiteTag) timerController.timerOn = false;
-                if (whichTurn == whiteTag) opponent = blackTag; else if (whichTurn == blackTag) opponent = whiteTag;
+                if (whichTurn == whiteTag) 
+                {
+                    opponent = blackTag;
+                    currYOfsset = whiteYOfsset;
+                }
+                else if (whichTurn == blackTag)
+                {
+                    opponent = whiteTag;
+                    currYOfsset = blackYOfsset;
+                }
 
                 if (whichTurn == whiteTag)
                 {
@@ -226,7 +224,10 @@ public class HHPawnMovement : MonoBehaviour
                                 Destroy(possibleMoves[i][1]);
                             }
 
-                            selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
+                            //selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
+                            //Call moveScript here
+                            Vector3 targetPos = new Vector3(possibleMoves[i][0].transform.position.x, currYOfsset, possibleMoves[i][0].transform.position.z);
+                            pawnMoveController.moveAndAnimatePawn(targetPos, selectedPawn, currYOfsset);
 
                             //update the data for the posobjects and the pawn object
                             PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
