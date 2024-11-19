@@ -161,10 +161,11 @@ if len(contours) > 0:
                 positiondata[f"white{white}"] = [int(col), 0, int(row)]
 
     #Check solidity and aspect ratio to find the game
-    if solidity < 0.9:
-        WhatGameIsIt = "Gaasetavl"
-    elif solidity < 0.9 < aspect_ratio:
+
+    if solidity < 0.9 < aspect_ratio:
         WhatGameIsIt = "Makvaer"
+    elif solidity < 0.9:
+        WhatGameIsIt = "Gaasetavl"
     else:
         WhatGameIsIt = "HundEfterHare"
 
