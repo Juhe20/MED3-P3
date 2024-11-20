@@ -244,11 +244,23 @@ MonoBehaviour:
   ogPosMatirial: {fileID: -6478536213147159724, guid: e4fdcea0ea65b08448b246d4562a29dd, type: 3}
   locationController: {fileID: 1162980142}
   calculateMoves: {fileID: 1162980147}
-  pawnMoveController: {fileID: 0}
+  pawnMoveController: {fileID: 1162980152}
   text: {fileID: 1373860433}
   currState: 0
-  whiteYOfsset: 0
-  blackYOfsset: 0
+  whiteYOfsset: 0.5
+  blackYOfsset: 0.5
+--- !u!114 &1162980152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162980140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc6127806938bf4ba6e2885c1ec48b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1345365981
 GameObject:
   m_ObjectHideFlags: 0
@@ -694,6 +706,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7041847279508856974, guid: cecdea08f1710294b8aa5025631deb13, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1162980147}
+    - targetCorrespondingSourceObject: {fileID: 7041847279508856974, guid: cecdea08f1710294b8aa5025631deb13, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1162980152}
   m_SourcePrefab: {fileID: 100100000, guid: cecdea08f1710294b8aa5025631deb13, type: 3}
 --- !u!1 &2049705023
 GameObject:
@@ -780,13 +795,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049705023}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 13, y: 28.2, z: 13}
+  m_LocalRotation: {x: 0.49533033, y: -0, z: -0, w: 0.86870474}
+  m_LocalPosition: {x: 13, y: 19, z: -2.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 59.383, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

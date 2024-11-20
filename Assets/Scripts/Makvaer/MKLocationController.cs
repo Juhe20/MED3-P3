@@ -58,21 +58,23 @@ public class MKLocationController : MonoBehaviour
 
         if (i < 3) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
         {
-            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(bPawnPrefab, currObj, i, j, posClass);
+            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(bPawnPrefab, currObj, i, j, posClass,"black");
         }
         else if (i > 4)
         {
-            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(wPawnPrefab, currObj, i, j, posClass);
+            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(wPawnPrefab, currObj, i, j, posClass, "white");
         }
 
         posList[i][j][0] = currObj;
     }
 
-    void createPawn(GameObject prefab, GameObject posObj, int i, int j, PosClass currPosObj)
+    void createPawn(GameObject prefab, GameObject posObj, int i, int j, PosClass currPosObj, string type)
     {
+        int rotate = 0;
+        if (type == "black") rotate = 90; else rotate = -90;
         if (posObj != null) //just a safe null check
         {
-            GameObject currObj = Instantiate(prefab, new Vector3(posObj.transform.position.x, posObj.transform.position.y + 0.5f, posObj.transform.position.z), Quaternion.Euler(0, 0, 0));
+            GameObject currObj = Instantiate(prefab, new Vector3(posObj.transform.position.x, posObj.transform.position.y + 0.5f, posObj.transform.position.z), Quaternion.Euler(0, rotate, 0));
             currObj.transform.SetParent(board.transform);
             PawnClass pawnClass = currObj.GetComponent<PawnClass>();
             pawnClass.setListX(i);

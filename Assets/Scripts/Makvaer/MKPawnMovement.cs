@@ -123,7 +123,9 @@ public class MKPawnMovement : MonoBehaviour
                                 Destroy(possibleMoves[i][1]);
                             }
 
-                            selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
+                            //selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
+                            Vector3 targetPos = new Vector3(possibleMoves[i][0].transform.position.x, currYOfsset, possibleMoves[i][0].transform.position.z);
+                            pawnMoveController.moveAndAnimatePawn(targetPos, selectedPawn, currYOfsset);
 
                             //update the data for the posobjects and the pawn object
                             PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
