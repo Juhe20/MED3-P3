@@ -131,21 +131,21 @@ public class LocationController : MonoBehaviour
 
         if (pos == (0,2) || pos == (0, 4)) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
         {
-            createPawn(wPawnPrefab,currObj,i,j,posClass);
+            createPawn(wPawnPrefab,currObj,i,j,posClass,0.1f,90f);
         }
         else if (i > 4 && i % 2 == 0)
         {
-            createPawn(bPawnPrefab, currObj,i,j,posClass);
+            createPawn(bPawnPrefab, currObj,i,j,posClass,0.6f,-90f);
         }
 
         posList[i][j][0] = currObj;
     }
 
-    void createPawn(GameObject prefab,GameObject posObj,int i, int j, PosClass currPosObj)
+    void createPawn(GameObject prefab,GameObject posObj,int i, int j, PosClass currPosObj, float yOffset, float yROffset)
     {
         if (posObj != null) //just a safe null check
         {
-            GameObject currObj = Instantiate(prefab,new Vector3(posObj.transform.position.x,posObj.transform.position.y+0.5f,posObj.transform.position.z), Quaternion.Euler(0,0,0));
+            GameObject currObj = Instantiate(prefab,new Vector3(posObj.transform.position.x,posObj.transform.position.y+yOffset,posObj.transform.position.z), Quaternion.Euler(0,yROffset,0));
             currObj.transform.SetParent(board.transform);
             PawnClass pawnClass = currObj.GetComponent<PawnClass>();
             pawnClass.setListX(i);

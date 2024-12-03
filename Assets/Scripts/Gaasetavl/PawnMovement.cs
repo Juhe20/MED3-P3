@@ -15,6 +15,9 @@ public class PawnMovement : MonoBehaviour
     [SerializeField] TimerController timerController;
     [SerializeField] TextMeshProUGUI timerText;
     [SerializeField] float timerTime;
+    [SerializeField] PawnMoveController pawnMoveController;
+    [SerializeField] float whiteYOffset = 0.5f;
+    [SerializeField] float blackYOffset = 0.5f;
 
     public enum state
     {
@@ -103,7 +106,9 @@ public class PawnMovement : MonoBehaviour
                                 Destroy(possibleMoves[i][1]);
                             }
 
-                            selectedPawn.transform.position = new Vector3 (possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y+0.5f, possibleMoves[i][0].transform.position.z);
+                            //selectedPawn.transform.position = new Vector3 (possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y+0.5f, possibleMoves[i][0].transform.position.z);
+                            Vector3 targetPos = new Vector3(possibleMoves[i][0].transform.position.x, whiteYOffset, possibleMoves[i][0].transform.position.z);
+                            pawnMoveController.moveAndAnimatePawn(targetPos, selectedPawn, whiteYOffset);
 
                             //update the data for the posobjects and the pawn object
                             PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info
@@ -193,7 +198,9 @@ public class PawnMovement : MonoBehaviour
                         {
                             if (clicked.Equals(possibleMoves[i][0]))
                             {
-                                selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
+                                //selectedPawn.transform.position = new Vector3(possibleMoves[i][0].transform.position.x, possibleMoves[i][0].transform.position.y + 0.5f, possibleMoves[i][0].transform.position.z);
+                                Vector3 targetPos = new Vector3(possibleMoves[i][0].transform.position.x, blackYOffset, possibleMoves[i][0].transform.position.z);
+                                pawnMoveController.moveAndAnimatePawn(targetPos, selectedPawn, blackYOffset);
 
                                 //update the data for the posobjects and the pawn object
                                 PawnClass selectedPawnClass = selectedPawn.GetComponent<PawnClass>(); // get the class that hold the info

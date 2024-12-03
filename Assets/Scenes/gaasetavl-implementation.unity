@@ -242,6 +242,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f473d6ab45d88904885574a6236c1049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1104998130 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+  m_PrefabInstance: {fileID: 8352839097197613872}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104998124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a7412c229398a248b606fa6872bf23b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1104998131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104998124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc6127806938bf4ba6e2885c1ec48b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1905005705
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,19 +442,34 @@ PrefabInstance:
     - target: {fileID: 7232767410359103908, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
       propertyPath: pawnM
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1104998130}
     - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
       propertyPath: cm
       value: 
       objectReference: {fileID: 1104998127}
     - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: blackYOffset
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: whiteYOffset
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
       propertyPath: locationController
       value: 
       objectReference: {fileID: 1104998128}
+    - target: {fileID: 9088461833224611992, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      propertyPath: pawnMoveController
+      value: 
+      objectReference: {fileID: 1104998131}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1104998131}
   m_SourcePrefab: {fileID: 100100000, guid: 445e5edf424fd9f4389d9b9486b3581d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
