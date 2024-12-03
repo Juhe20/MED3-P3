@@ -14,9 +14,7 @@ public class MKLocationController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        float pawnDis = 30f / 8f;
-        float oddOffset = pawnDis;
-        float widthFactor = 1f;
+        float pawnDis = 30f / 8f; //size of the board Divided with the number of pawns in a row
 
         for (int i = 0; i < 8; i++)
         {
@@ -30,7 +28,7 @@ public class MKLocationController : MonoBehaviour
             for (int j = 0; j < 8; j++)
             {
                 float _currX = i * pawnDis;
-                float _currZ = j * pawnDis * widthFactor;
+                float _currZ = j * pawnDis;
 
                 createBoardPos(_currX, _currZ, i, j);
             }

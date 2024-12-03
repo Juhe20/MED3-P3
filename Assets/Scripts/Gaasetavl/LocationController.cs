@@ -17,9 +17,9 @@ public class LocationController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        float pawnDis = 28f / 13f;
-        float oddOffset = pawnDis;
-        float widthFactor = 2f;
+        float pawnDis = 28f / 13f; //size of the board Divided with the number of pawns in a row
+        float oddOffset = pawnDis; //in gaasetavl every other row is indended, this is the offset
+        float widthFactor = 2f; // to strecth it to the full width of the board
 
         for (int i = 0; i < 13; i++)
         {
