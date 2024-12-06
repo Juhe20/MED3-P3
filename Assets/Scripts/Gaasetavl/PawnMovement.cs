@@ -66,7 +66,7 @@ public class PawnMovement : MonoBehaviour
         {
             //white states
             case (state.WHITE_SELECT):
-
+                if (timerController.timerOn == true) timerController.timerOn = false;
                 if (Input.GetMouseButtonDown(0))
                 {
                     GameObject clicked = clickObject();
