@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -213,7 +213,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6e8e8b7436cea4eb1ef90cb31b08af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  posPrefab: {fileID: 5337947972389517948, guid: e1a3de5d8c445614b9574533b7b3cdbe, type: 3}
+  posPrefab1: {fileID: 5337947972389517948, guid: e1a3de5d8c445614b9574533b7b3cdbe, type: 3}
+  posPrefab2: {fileID: 5337947972389517948, guid: 1f920786624cdf743b5a63436ddc0a48, type: 3}
   board: {fileID: 1162980140}
   bPawnPrefab: {fileID: 1050987475072929572, guid: 1abcf35bc565f25478c4c5b1a458e1ef, type: 3}
   wPawnPrefab: {fileID: 4800456684229854070, guid: e84fa9b63ade8ea458340a5558b58638, type: 3}
@@ -241,7 +242,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f95713fe610c74890a288ee82d617a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ogPosMatirial: {fileID: -6478536213147159724, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
   locationController: {fileID: 1162980142}
   calculateMoves: {fileID: 1162980147}
   pawnMoveController: {fileID: 1162980152}

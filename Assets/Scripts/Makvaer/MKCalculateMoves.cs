@@ -46,7 +46,9 @@ public class MKCalculateMoves : MonoBehaviour
                             };
 
                             calculatedMoves.Add(data);
-                            currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                            //currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                            GameObject child = currPosObj.transform.GetChild(0).gameObject;
+                            child.GetComponent<MeshRenderer>().material.color = Color.red;
                         }
                         else if (posList[currListX][currListY][1] != null)
                         {
@@ -96,7 +98,10 @@ public class MKCalculateMoves : MonoBehaviour
         {
             attackMove.Add(posList[currListXHere][currListYHere][0]);
             attackMove.Add(blackPawn);
-            posList[currListXHere][currListYHere][0].GetComponent<MeshRenderer>().material.color = Color.red;
+            //posList[currListXHere][currListYHere][0].GetComponent<MeshRenderer>().material.color = Color.red;
+            GameObject child = posList[currListXHere][currListYHere][0].transform.GetChild(0).gameObject;
+            child.GetComponent<MeshRenderer>().material.color = Color.red;
+
 
             return attackMove;
         }
@@ -169,7 +174,10 @@ public class MKCalculateMoves : MonoBehaviour
                                 };
 
                                 calculatedMoves.Add(data);
-                                currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                                //currPosObj.GetComponent<MeshRenderer>().material.color = Color.red;
+                                GameObject child = currPosObj.transform.GetChild(0).gameObject;
+                                child.GetComponent<MeshRenderer>().material.color = Color.red;
+
                             }
                             else if (posList[currListX][currListY][1].CompareTag(oponentPawn))
                             {

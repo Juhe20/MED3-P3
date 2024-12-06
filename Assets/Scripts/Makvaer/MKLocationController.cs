@@ -5,7 +5,8 @@ using UnityEngine;
 public class MKLocationController : MonoBehaviour
 {
     public List<List<List<GameObject>>> posList = new List<List<List<GameObject>>>();
-    [SerializeField] GameObject posPrefab;
+    [SerializeField] GameObject posPrefab1;
+    [SerializeField] GameObject posPrefab2;
     //[SerializeField] GameObject posVisualPrefab;
     [SerializeField] GameObject board;
     [SerializeField] GameObject bPawnPrefab;
@@ -43,9 +44,30 @@ public class MKLocationController : MonoBehaviour
 
     void createBoardPos(float x, float z, int i, int j)
     {
+        GameObject currObj = null;
+
         //instansiate object
-        GameObject currObj = Instantiate(posPrefab, new Vector3(x, 0f, z), Quaternion.Euler(0, 0, 0));
-        currObj.transform.SetParent(board.transform);
+        if (i % 2 == 0 && j % 2 == 0)
+        {
+            currObj = Instantiate(posPrefab1, new Vector3(x, 0f, z), Quaternion.Euler(0, 0, 0));
+            currObj.transform.SetParent(board.transform);
+        }
+        else if (i % 2 == 0 && j%2 != 0)
+        {
+            currObj = Instantiate(posPrefab2, new Vector3(x, 0f, z), Quaternion.Euler(0, 0, 0));
+            currObj.transform.SetParent(board.transform);
+        }
+
+        if (i % 2 != 0 && j % 2 != 0)
+        {
+            currObj = Instantiate(posPrefab1, new Vector3(x, 0f, z), Quaternion.Euler(0, 0, 0));
+            currObj.transform.SetParent(board.transform);
+        }
+        else if (i % 2 != 0 && j % 2 == 0)
+        {
+            currObj = Instantiate(posPrefab2, new Vector3(x, 0f, z), Quaternion.Euler(0, 0, 0));
+            currObj.transform.SetParent(board.transform);
+        }
 
         PosClass posClass = currObj.GetComponent<PosClass>();
         if (posClass != null)

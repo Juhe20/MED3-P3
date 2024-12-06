@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class MKPawnMovement : MonoBehaviour
 {
-    [SerializeField] Material ogPosMatirial;
     [SerializeField] MKLocationController locationController;
     [SerializeField] MKCalculateMoves calculateMoves;
     [SerializeField] PawnMoveController pawnMoveController;
@@ -145,8 +144,8 @@ public class MKPawnMovement : MonoBehaviour
                             }
                             for (int j = 0; j < possibleMoves.Count; j++)
                             {
-                                possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
-
+                                GameObject child = possibleMoves[j][0].transform.GetChild(0).gameObject;
+                                child.GetComponent<MeshRenderer>().material = child.GetComponent<흆ande>().ogMaterial;
                             }
                             possibleMoves.Clear();
 
@@ -173,7 +172,8 @@ public class MKPawnMovement : MonoBehaviour
                 {
                     for (int i = 0; i < possibleMoves.Count; i++)
                     {
-                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                        GameObject child = possibleMoves[i][0].transform.GetChild(0).gameObject;
+                        child.GetComponent<MeshRenderer>().material = child.GetComponent<흆ande>().ogMaterial;
 
                     }
                     possibleMoves.Clear();
@@ -191,7 +191,8 @@ public class MKPawnMovement : MonoBehaviour
                 {
                     for (int i = 0; i < possibleMoves.Count; i++)
                     {
-                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                        GameObject child = possibleMoves[i][0].transform.GetChild(0).gameObject;
+                        child.GetComponent<MeshRenderer>().material = child.GetComponent<흆ande>().ogMaterial;
 
                     }
                     possibleMoves.Clear();
@@ -204,7 +205,8 @@ public class MKPawnMovement : MonoBehaviour
                 {
                     for (int i = 0; i < possibleMoves.Count; i++)
                     {
-                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                        GameObject child = possibleMoves[i][0].transform.GetChild(0).gameObject;
+                        child.GetComponent<MeshRenderer>().material = child.GetComponent<흆ande>().ogMaterial;
 
                     }
                     possibleMoves.Clear();

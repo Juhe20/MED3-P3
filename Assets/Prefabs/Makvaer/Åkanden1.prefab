@@ -50,10 +50,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
       propertyPath: m_Name
-      value: "\xC5kanden"
+      value: "\xC5kanden1"
       objectReference: {fileID: 0}
+    - target: {fileID: 7202271454713460447, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a52fbce401e43d644b6f8834acd86f50, type: 2}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 65702495048144492, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
+    - {fileID: -8700617353114198275, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
@@ -65,6 +71,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5476807489370006503}
+    - targetCorrespondingSourceObject: {fileID: -5568371526223589888, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6962656320860282017}
   m_SourcePrefab: {fileID: 100100000, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
 --- !u!1 &5337947972389517948 stripped
 GameObject:
@@ -128,7 +137,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: a52fbce401e43d644b6f8834acd86f50, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,3 +159,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8389204651048503597 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5568371526223589888, guid: 988a528e9af71dd49a1442c9b0db1029, type: 3}
+  m_PrefabInstance: {fileID: 5104085498339919661}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6962656320860282017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8389204651048503597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d48b032fa64a243b571b83abc2d0e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ogMaterial: {fileID: 2100000, guid: a52fbce401e43d644b6f8834acd86f50, type: 2}
