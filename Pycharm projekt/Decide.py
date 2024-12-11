@@ -106,12 +106,12 @@ if len(contours) > 0:
                 positiondata[f"white{white}"] = [int(col), 0, int(row)]
 
     #Check solidity and aspect ratio to find the game
-    if solidity < 0.9 < aspect_ratio:
-        WhatGameIsIt = "Makvaer"
-    elif solidity < 0.9:
-        WhatGameIsIt = "Gaasetavl"
+    if solidity > 0.85 < aspect_ratio:
+        detected_game = "Makvaer"
+    elif solidity < 0.4 or (solidity < 0.6 and aspect_ratio > 0.7):
+        detected_game = "Gaasetavl"
     else:
-        WhatGameIsIt = "HundEfterHare"
+        detected_game = "HundEfterHare"
 
     print(f"Number of circles detected: {circles}")
     print(f"Position data: {positiondata}")
