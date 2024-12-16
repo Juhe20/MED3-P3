@@ -3,84 +3,129 @@ import numpy as np
 import socket
 import json
 
+#Connect to the local server
 host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
-img = cv2.imread("Makvaer/Makvaer.png")
-#img = cv2.imread("Hund_efter_hare/boardplaying.png")
-#img = cv2.imread("Gaasetavl/Images/Gaasetavl.png")
+#Load image
+img = cv2.imread("Makvaer/IMG_0827.jpg")
+img = cv2.resize(img, (600, 800))
 
-img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#Grabcut for background removal
+mask = np.zeros(img.shape[:2], np.uint8)
+rect = (50, 50, img.shape[1] - 100, img.shape[0] - 100)
+background = np.zeros((1, 65), np.float64)
+foreground = np.zeros((1, 65), np.float64)
+cv2.grabCut(img, mask, rect, background, foreground, 5, cv2.GC_INIT_WITH_RECT)
 
-gray_blurred = cv2.blur(img_gray, (3, 3))
+#Make background transparent and extract foreground into new array
+mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+img_foreground = img * mask2[:, :, np.newaxis]
+img_transparent = cv2.cvtColor(img_foreground, cv2.COLOR_BGR2BGRA)
+img_transparent[:, :, 3] = mask2 * 255
 
-# Apply Hough transform on the blurred image.
-detected_circles = cv2.HoughCircles(gray_blurred,
-                                    cv2.HOUGH_GRADIENT, 0.2, 20, param1=55,
-                                    param2=30, minRadius=1, maxRadius=30)
+#Board and piece detection
+img_gray = cv2.cvtColor(img_foreground, cv2.COLOR_BGR2GRAY)
+blurred = cv2.GaussianBlur(img_gray, (5, 5), 0)
+edges = cv2.Canny(blurred, 50, 150)
+kernel = np.ones((5, 5), np.uint8)
+edges_cleaned = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
+contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-positiondata = {}
-# Draw circles that are detected.
-if detected_circles is not None:
+#Check if any contours were found
+if len(contours) > 0:
+    largest_contour = max(contours, key=cv2.contourArea)
+    epsilon = 0.02 * cv2.arcLength(largest_contour, True)
+    approx = cv2.approxPolyDP(largest_contour, epsilon, True)
+    #Aspect ratio and solidity for board shape detection
+    x, y, w, h = cv2.boundingRect(largest_contour)
+    aspect_ratio = float(w) / h
+    hull = cv2.convexHull(largest_contour)
+    hull_area = cv2.contourArea(hull)
+    contour_area = cv2.contourArea(largest_contour)
+    solidity = contour_area / hull_area
 
-    # Convert the circle parameters a, b and r to integers.
-    detected_circles = np.uint16(np.around(detected_circles))
-    white  = 0
+    board_area = cv2.contourArea(largest_contour)
+    cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
+
+    #Perspective transform to fix board distortion
+    bottomLeft = [x, y + h]
+    bottomRight = [x + w, y + h]
+    topRight = [x + w, y]
+    topLeft = [x, y]
+    widthLeft = np.sqrt(((bottomLeft[0] - topLeft[0]) ** 2) + ((bottomLeft[1] - topLeft[1]) ** 2))
+    widthRight = np.sqrt(((bottomRight[0] - topRight[0]) ** 2) + ((bottomRight[1] - topRight[1]) ** 2))
+    maxWidth = max(int(widthLeft), int(widthRight))
+    heightBottom = np.sqrt(((bottomLeft[0] - bottomRight[0]) ** 2) + ((bottomLeft[1] - bottomRight[1]) ** 2))
+    heightTop = np.sqrt(((topRight[0] - topLeft[0]) ** 2) + ((topRight[1] - topLeft[1]) ** 2))
+    maxHeight = max(int(heightBottom), int(heightTop))
+
+    input_pts = np.float32([bottomLeft, bottomRight, topRight, topLeft])
+    output_pts = np.float32([[0, maxHeight], [maxWidth, maxHeight], [maxWidth, 0], [0, 0]])
+    transformPosition = cv2.getPerspectiveTransform(input_pts, output_pts)
+    out = cv2.warpPerspective(img_gray, transformPosition, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
+    #out_col = cv2.warpPerspective(img, transformPosition, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
+
+    #Hough Circle Transform for piece detection
+    detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=12.7, minRadius=12, maxRadius=17)
+    positiondata = {}
+    white = 0
     black = 0
     circles = 0
-    colors = []
-    for pt in detected_circles[0, :]:
-        a, b, r = pt[0], pt[1], pt[2]
-        circles = circles+1
+    grid_size = 8
+    grid = np.zeros((grid_size, grid_size))
+    tile_width = maxWidth // grid_size
+    tile_height = maxHeight // grid_size
+    #Loop through each detected circles coordinates to add to grid
+    if detected_circles is not None:
+        detected_circles = np.uint16(np.around(detected_circles))
+        for coord in detected_circles[0, :]:
+            x, y, r = coord[0], coord[1], coord[2]
+            circles += 1
+            col = x // tile_width
+            row = y // tile_height
+            if grid[row, col] == 0:
+                grid[row, col] = 1
+            cv2.circle(out, (x, y), r, (0, 255, 0), 2)
+            cv2.circle(out, (x, y), 1, (0, 0, 255), 3)
+            #Use LAB values to get average brightness on the pieces
+            img_LAB = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+            L, A, B = cv2.split(img_LAB)
+            roi_size = 4
+            x1, y1 = max(0, x - roi_size), max(0, y - roi_size)
+            x2, y2 = min(B.shape[1], x + roi_size), min(B.shape[0], y + roi_size)
+            roi = B[y1:y2, x1:x2]
+            mean_B = np.mean(roi)
+            #Check mean value of B in LAB
+            if mean_B > 131:
+                black += 1
+                positiondata[f"black{black}"] = [int(col), 0, int(row)]
+            else:
+                white += 1
+                positiondata[f"white{white}"] = [int(col), 0, int(row)]
 
-        # Draw the circumference of the circle.
-        #cv2.circle(img, (a, b), r, (0, 255, 0), 2)
+    #Check solidity and aspect ratio to find the game
+    if solidity > 0.85 < aspect_ratio:
+        detected_game = "Makvaer"
+    elif solidity < 0.4 or (solidity < 0.6 and aspect_ratio > 0.7):
+        detected_game = "Gaasetavl"
+    else:
+        detected_game = "HundEfterHare"
 
-
-        # Draw a small circle (of radius 1) to show the center.
-        cv2.circle(img, (a, b), 1, (0, 0, 255), 3)
-
-
-
-#Lavet selv og med https://www.geeksforgeeks.org/circle-detection-using-opencv-python/
-        # Get the color of the circle
-        mask = np.zeros_like(img_gray)  # Create a mask for the current circle
-        cv2.circle(mask, (a, b), r, 255, -1)  # Fill the circle in the mask
-
-        # Extract the colors from the masked area
-        masked_img = cv2.bitwise_and(img, img, mask=mask)
-        mean_color = cv2.mean(masked_img, mask=mask)[:3]  # Get the mean color
-        colors.append(mean_color)  # Store the mean color
-
-        # Determine if the circle is black or white
-        average_color = np.mean(mean_color)  # Calculate average brightness
-        if average_color < 128:  # Threshold for black (can adjust)
-            black += 1
-            positiondata[f"black{black}"] = [int(a), 0, int(b)]
-        else:
-            white += 1
-            positiondata[f"white{white}"] = [int(a), 0, int(b)]
-#Lavet af Chat
-
-
-    print(f"Number of circles: {circles}")
-    print(f"Positiondata: {positiondata}")
+    print(f"Number of circles detected: {circles}")
+    print(f"Position data: {positiondata}")
     print(f"Number of white circles: {white}")
     print(f"Number of black circles: {black}")
 
-if white == 1 and black == 3:
-    WhatGameIsIt = "Hundefterhare"
-elif white == 2:
-    WhatGameIsIt = "Gaasetavl"
-else:
-    WhatGameIsIt = "Makvaer"
+    #Send data to local server
+    positions = json.dumps(positiondata)
+    sock.sendall(positions.encode("UTF-8"))
+    sock.sendall(WhatGameIsIt.encode("UTF-8"))
+    receivedData = sock.recv(1024).decode("UTF-8")
+    print(receivedData)
 
-positions = json.dumps(positiondata)
-
-sock.sendall(positions.encode("UTF-8"))  # Converting string to Byte, and sending it to C#
-sock.sendall(WhatGameIsIt.encode("UTF-8"))
-receivedData = sock.recv(1024).decode("UTF-8")  # receiving data in Byte from C#, and converting it to String
-print(receivedData)
-
-print(WhatGameIsIt)
+    #Display image
+    #cv2.imshow("Detected Board", out)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()

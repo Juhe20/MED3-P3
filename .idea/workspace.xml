@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1e665d48-a97b-4ae4-b6e3-3105967a0930" name="Changes" comment="" />
+    <list default="true" id="a066c465-f84f-465a-8167-65219902e69c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -73,5 +73,8 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/MED3_P3$main.coverage" NAME="main Coverage Results" MODIFIED="1727687199854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Pycharm projekt/Gaasetavl" />
+  </component>
+  <component name="TaskManager">
+    <servers />
   </component>
 </project>
