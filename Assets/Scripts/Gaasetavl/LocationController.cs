@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class LocationController : MonoBehaviour
 {
+    private GameObject gameChooser;
     public PythonReceiver receivePos;
     public List<List<List<GameObject>>> posList = new List<List<List<GameObject>>>();
     [SerializeField] GameObject posPrefab;
@@ -18,6 +19,11 @@ public class LocationController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameChooser = GameObject.FindWithTag("GameChooser");
+        if (gameChooser != null)
+        {
+            receivePos = gameChooser.GetComponent<PythonReceiver>();
+        }
         float pawnDis = 28f / 13f; //size of the board Divided with the number of pawns in a row
         float oddOffset = pawnDis; //in gaasetavl every other row is indended, this is the offset
         float widthFactor = 2f; // to strecth it to the full width of the board
@@ -112,14 +118,13 @@ public class LocationController : MonoBehaviour
                 }
             }
         }
-        //Debug.Log(stringToPrint);
     }
 
 
     void createBoardPos(float x, float z, int i, int j)
     {
         (int, int) pos = (i, j);
-        //instansiate object
+        //instantiate object
         GameObject currObj = Instantiate(posPrefab, new Vector3(x,0f,z),Quaternion.Euler(0,0,0));
         currObj.transform.SetParent(board.transform);
 
@@ -141,7 +146,7 @@ public class LocationController : MonoBehaviour
         {
             if (pawnPos.x == i && pawnPos.z == j)
             {
-                createPawn(bPawnPrefab, currObj, i, j, posClass, 0.1f, -90f);
+                createPawn(bPawnPrefab, currObj, i, j, posClass, 0.6f, -90f);
             }
         }
         //if (pos == (0,2) || pos == (0, 4)) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort

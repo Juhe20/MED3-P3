@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MKLocationController : MonoBehaviour
 {
+    public PythonReceiver receivePos;
+    private GameObject gameChooser;
     public List<List<List<GameObject>>> posList = new List<List<List<GameObject>>>();
     [SerializeField] GameObject posPrefab1;
     [SerializeField] GameObject posPrefab2;
@@ -15,6 +17,11 @@ public class MKLocationController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameChooser = GameObject.FindWithTag("GameChooser");
+        if (gameChooser != null)
+        {
+            receivePos = gameChooser.GetComponent<PythonReceiver>();
+        }
         float pawnDis = 30f / 8f; //size of the board Divided with the number of pawns in a row
 
         for (int i = 0; i < 8; i++)
@@ -76,14 +83,29 @@ public class MKLocationController : MonoBehaviour
             posClass.setListY(j);
         }
 
-        if (i < 3) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
+        foreach (Vector3 pawnPos in receivePos.whitePosition)
         {
-            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(bPawnPrefab, currObj, i, j, posClass,"black");
+            if (pawnPos.x == i && pawnPos.z == j)
+            {
+                createPawn(wPawnPrefab, currObj, i, j, posClass, "white");
+            }
         }
-        else if (i > 4)
+        foreach (Vector3 pawnPos in receivePos.blackPositions)
         {
-            if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(wPawnPrefab, currObj, i, j, posClass, "white");
+            if (pawnPos.x == i && pawnPos.z == j)
+            {
+                createPawn(bPawnPrefab, currObj, i, j, posClass, "black");
+            }
         }
+
+        //if (i < 3) dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
+        //{
+        //    if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(bPawnPrefab, currObj, i, j, posClass,"black");
+        //}
+        //else if (i > 4)
+        //{
+        //    if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) createPawn(wPawnPrefab, currObj, i, j, posClass, "white");
+        //}
 
         posList[i][j][0] = currObj;
     }

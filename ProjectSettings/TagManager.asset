@@ -6,6 +6,7 @@ TagManager:
   tags:
   - whitePawn
   - blackPawn
+  - GameChooser
   layers:
   - Default
   - TransparentFX

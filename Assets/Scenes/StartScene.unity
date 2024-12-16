@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 232078530}
   m_Layer: 0
   m_Name: GameChooser
-  m_TagString: Untagged
+  m_TagString: GameChooser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

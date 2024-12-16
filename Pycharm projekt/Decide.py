@@ -9,15 +9,15 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
 #Load image
-img = cv2.imread("")
+img = cv2.imread("Images/Makvaer_Test.jpg")
 img = cv2.resize(img, (600, 800))
 
 #Grabcut for background removal
 mask = np.zeros(img.shape[:2], np.uint8)
-rect = (50, 50, img.shape[1] - 100, img.shape[0] - 100)
+rect = (180, 180, img.shape[1] - 300, img.shape[0] - 360)
 background = np.zeros((1, 65), np.float64)
 foreground = np.zeros((1, 65), np.float64)
-cv2.grabCut(img, mask, rect, background, foreground, 5, cv2.GC_INIT_WITH_RECT)
+cv2.grabCut(img, mask, rect, background, foreground, 10, cv2.GC_INIT_WITH_RECT)
 
 #Make background transparent and extract foreground into new array
 mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
@@ -25,9 +25,9 @@ img_foreground = img * mask2[:, :, np.newaxis]
 img_transparent = cv2.cvtColor(img_foreground, cv2.COLOR_BGR2BGRA)
 img_transparent[:, :, 3] = mask2 * 255
 
-#Board and piece detection
+#Board detection
 img_gray = cv2.cvtColor(img_foreground, cv2.COLOR_BGR2GRAY)
-blurred = cv2.GaussianBlur(img_gray, (5, 5), 0)
+blurred = cv2.GaussianBlur(img_gray, (7, 7), 0)
 edges = cv2.Canny(blurred, 50, 150)
 kernel = np.ones((5, 5), np.uint8)
 edges_cleaned = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
@@ -36,8 +36,9 @@ contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPRO
 #Check if any contours were found
 if len(contours) > 0:
     largest_contour = max(contours, key=cv2.contourArea)
-    epsilon = 0.02 * cv2.arcLength(largest_contour, True)
+    epsilon = 0.01 * cv2.arcLength(largest_contour, True)
     approx = cv2.approxPolyDP(largest_contour, epsilon, True)
+
     #Aspect ratio and solidity for board shape detection
     x, y, w, h = cv2.boundingRect(largest_contour)
     aspect_ratio = float(w) / h
@@ -65,7 +66,6 @@ if len(contours) > 0:
     output_pts = np.float32([[0, maxHeight], [maxWidth, maxHeight], [maxWidth, 0], [0, 0]])
     transformPosition = cv2.getPerspectiveTransform(input_pts, output_pts)
     out = cv2.warpPerspective(img_gray, transformPosition, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
-    #out_col = cv2.warpPerspective(img, transformPosition, (maxWidth, maxHeight), flags=cv2.INTER_LINEAR)
 
     #Hough Circle Transform for piece detection
     detected_circles = cv2.HoughCircles(out, cv2.HOUGH_GRADIENT, 0.2, 20, param1=45, param2=12.7, minRadius=12, maxRadius=17)
@@ -112,11 +112,13 @@ if len(contours) > 0:
         detected_game = "Gaasetavl"
     else:
         detected_game = "HundEfterHare"
+        #detected_game = "Makvaer"
 
     print(f"Number of circles detected: {circles}")
     print(f"Position data: {positiondata}")
     print(f"Number of white circles: {white}")
     print(f"Number of black circles: {black}")
+    print(f"What game is it: {detected_game}")
 
     #Send data to local server
     positions = json.dumps(positiondata)
@@ -124,8 +126,3 @@ if len(contours) > 0:
     sock.sendall(detected_game.encode("UTF-8"))
     receivedData = sock.recv(1024).decode("UTF-8")
     print(receivedData)
-
-    #Display image
-    #cv2.imshow("Detected Board", out)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
