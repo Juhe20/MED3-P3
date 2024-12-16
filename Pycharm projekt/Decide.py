@@ -8,9 +8,15 @@ host, port = "127.0.0.1", 25001
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.connect((host, port))
 
+<<<<<<< Updated upstream
 #Load image
 img = cv2.imread("Makvaer/IMG_0827.jpg")
 img = cv2.resize(img, (600, 800))
+=======
+img = cv2.imread("Gaasetavl/Images/")
+#img = cv2.imread("Hund_efter_hare/boardplaying.png")
+#img = cv2.imread("Gaasetavl/Images/Gaasetavl.png")
+>>>>>>> Stashed changes
 
 #Grabcut for background removal
 mask = np.zeros(img.shape[:2], np.uint8)

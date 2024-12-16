@@ -18,11 +18,17 @@ public class PythonReceiver : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
+<<<<<<< Updated upstream
     public GameObject blackPrefab;
     public GameObject whitePrefab;
     List<Vector3> blackPositions = new List<Vector3>();
     List<Vector3> whitePosition = new List<Vector3>();
     bool running;
+=======
+    public List<Vector3> blackPositions = new List<Vector3>();
+    public List<Vector3> whitePosition = new List<Vector3>();
+    private bool running;
+>>>>>>> Stashed changes
     private string gameChanger;
 
     private void Awake()
@@ -41,6 +47,7 @@ public class PythonReceiver : MonoBehaviour
 
     private void Update()
     {
+<<<<<<< Updated upstream
         // Check if the string has been changed to a game name and loads the scene for that game
         if (gameChanger != null)
         {
@@ -68,6 +75,20 @@ public class PythonReceiver : MonoBehaviour
                 DontDestroyOnLoad(spawnedWhite);  // Make sure the spawned white piece persists
             }
             whitePosition.Clear();  // Clear the list after instantiation to avoid duplicates
+=======
+        //Checks if the string has been changed to a game name and loads the scene for that game
+        if (gameChanger == "Makvaer")
+        {
+            SceneManager.LoadScene("Makvaer-implementation");
+        }
+        else if (gameChanger == "Hundefterhare")
+        {
+            SceneManager.LoadScene("Hund efter hare-implementation");
+        }
+        else if (gameChanger == "Gaasetavl")
+        {
+            SceneManager.LoadScene("Gaasetavl-implementation");
+>>>>>>> Stashed changes
         }
     }
 
@@ -137,11 +158,6 @@ public class PythonReceiver : MonoBehaviour
                 whitePosition.Add(position);
             }
         }
-        print("Received list of positions!");
-
-        //Sends data back to Python if necessary at a later point
-        byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this message?");
-        nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length);
     }
 }
 

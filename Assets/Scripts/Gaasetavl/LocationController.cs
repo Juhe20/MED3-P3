@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class LocationController : MonoBehaviour
 {
+    public PythonReceiver receivePos;
     public List<List<List<GameObject>>> posList = new List<List<List<GameObject>>>();
     [SerializeField] GameObject posPrefab;
     //[SerializeField] GameObject posVisualPrefab;
@@ -129,14 +130,28 @@ public class LocationController : MonoBehaviour
             posClass.setListY(j);
         }
 
-        if (pos == (0,2) || pos == (0, 4)) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
+        foreach (Vector3 pawnPos in receivePos.whitePosition)
         {
-            createPawn(wPawnPrefab,currObj,i,j,posClass,0.1f,90f);
+            if(pawnPos.x == i && pawnPos.z == j)
+            {
+                createPawn(wPawnPrefab, currObj, i, j, posClass, 0.1f, 90f);
+            }
         }
-        else if (i > 4 && i % 2 == 0)
+        foreach (Vector3 pawnPos in receivePos.blackPositions)
         {
-            createPawn(bPawnPrefab, currObj,i,j,posClass,0.6f,-90f);
+            if (pawnPos.x == i && pawnPos.z == j)
+            {
+                createPawn(bPawnPrefab, currObj, i, j, posClass, 0.1f, -90f);
+            }
         }
+        //if (pos == (0,2) || pos == (0, 4)) // dette burde relativt nemt kunne laves om til at tage imod en liste med exempelvis string "white" og "black" og så tjekke hvis den liste pos == white lav en vid og vice versa med sort
+        //{
+        //    createPawn(wPawnPrefab,currObj,i,j,posClass,0.1f,90f);
+        //}
+        //else if (i > 4 && i % 2 == 0)
+        //{
+        //    createPawn(bPawnPrefab, currObj,i,j,posClass,0.6f,-90f);
+        //}
 
         posList[i][j][0] = currObj;
     }
