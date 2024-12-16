@@ -18,17 +18,9 @@ public class PythonReceiver : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-<<<<<<< Updated upstream
-    public GameObject blackPrefab;
-    public GameObject whitePrefab;
-    List<Vector3> blackPositions = new List<Vector3>();
-    List<Vector3> whitePosition = new List<Vector3>();
-    bool running;
-=======
     public List<Vector3> blackPositions = new List<Vector3>();
     public List<Vector3> whitePosition = new List<Vector3>();
     private bool running;
->>>>>>> Stashed changes
     private string gameChanger;
 
     private void Awake()
@@ -47,48 +39,11 @@ public class PythonReceiver : MonoBehaviour
 
     private void Update()
     {
-<<<<<<< Updated upstream
         // Check if the string has been changed to a game name and loads the scene for that game
         if (gameChanger != null)
         {
             SceneManager.LoadScene(gameChanger);
             gameChanger = null;  // Clear the gameChanger after switching scenes
-        }
-
-        // Check and instantiate black pieces
-        if (blackPositions.Count > 0)
-        {
-            foreach (var black in blackPositions)
-            {
-                GameObject spawnedBlack = Instantiate(blackPrefab, black, Quaternion.identity);
-                DontDestroyOnLoad(spawnedBlack);  // Make sure the spawned black piece persists
-            }
-            blackPositions.Clear();  // Clear the list after instantiation to avoid duplicates
-        }
-
-        // Check and instantiate white pieces
-        if (whitePosition.Count > 0)
-        {
-            foreach (var white in whitePosition)
-            {
-                GameObject spawnedWhite = Instantiate(whitePrefab, white, Quaternion.identity);
-                DontDestroyOnLoad(spawnedWhite);  // Make sure the spawned white piece persists
-            }
-            whitePosition.Clear();  // Clear the list after instantiation to avoid duplicates
-=======
-        //Checks if the string has been changed to a game name and loads the scene for that game
-        if (gameChanger == "Makvaer")
-        {
-            SceneManager.LoadScene("Makvaer-implementation");
-        }
-        else if (gameChanger == "Hundefterhare")
-        {
-            SceneManager.LoadScene("Hund efter hare-implementation");
-        }
-        else if (gameChanger == "Gaasetavl")
-        {
-            SceneManager.LoadScene("Gaasetavl-implementation");
->>>>>>> Stashed changes
         }
     }
 
@@ -133,9 +88,9 @@ public class PythonReceiver : MonoBehaviour
         {
             gameChanger = "Gaasetavl";
         }
-        if (dataReceived == ("Hundefterhare"))
+        if (dataReceived == ("HundEfterHare"))
         {
-            gameChanger = "Hundefterhare";
+            gameChanger = "HundEfterHare";
         }
 
         Debug.Log($"Received JSON: {dataReceived}");

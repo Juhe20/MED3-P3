@@ -9,7 +9,7 @@ using TMPro;
 
 public class PawnMovement : MonoBehaviour
 {
-    [SerializeField] Material ogPosMatirial;
+    [SerializeField] Material ogPosMaterial;
     public LocationController locationController;
     [SerializeField] CalculateMoves cm;
     [SerializeField] TimerController timerController;
@@ -127,7 +127,7 @@ public class PawnMovement : MonoBehaviour
                             }
                             for (int j = 0; j < possibleMoves.Count; j++)
                             {
-                                possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                                possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMaterial;
                                 
                             }
                             possibleMoves.Clear();
@@ -141,7 +141,7 @@ public class PawnMovement : MonoBehaviour
                 {
                     for (int i = 0; i < possibleMoves.Count; i++)
                     {
-                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMaterial;
 
                     }
                     possibleMoves.Clear();
@@ -154,7 +154,7 @@ public class PawnMovement : MonoBehaviour
                 timerText.text = "The Foxes Slays!";
                 for (int i = 0; i < possibleMoves.Count; i++)
                 {
-                    possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                    possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMaterial;
 
                 }
                 possibleMoves.Clear();
@@ -219,7 +219,7 @@ public class PawnMovement : MonoBehaviour
                                 }
                                 for (int j = 0; j < possibleMoves.Count; j++)
                                 {
-                                    possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                                    possibleMoves[j][0].GetComponent<MeshRenderer>().material = ogPosMaterial;
 
                                 }
                                 possibleMoves.Clear();
@@ -234,7 +234,7 @@ public class PawnMovement : MonoBehaviour
                 {
                     for (int i = 0; i < possibleMoves.Count; i++)
                     {
-                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                        possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMaterial;
 
                     }
                     possibleMoves.Clear();
@@ -246,7 +246,7 @@ public class PawnMovement : MonoBehaviour
                 timerText.text = "The Geese Slays!";
                 for (int i = 0; i < possibleMoves.Count; i++)
                 {
-                    possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMatirial;
+                    possibleMoves[i][0].GetComponent<MeshRenderer>().material = ogPosMaterial;
 
                 }
                 possibleMoves.Clear();
